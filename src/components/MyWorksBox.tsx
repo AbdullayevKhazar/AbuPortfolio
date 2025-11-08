@@ -6,17 +6,17 @@ import { Link } from "react-router-dom";
 const MyWorksBox = ({
   title,
   description,
-  imageUrl,
+  mainImage,
   technologies,
   liveUrl,
-  codeUrl,
+  githubLink,
 }: {
   title: string;
   description: string;
-  imageUrl: string;
+  mainImage: string;
   technologies: string[];
   liveUrl?: string;
-  codeUrl?: string;
+  githubLink: string;
 }) => {
   return (
     <Link
@@ -25,7 +25,7 @@ const MyWorksBox = ({
     >
       <div className="aspect-video overflow-hidden">
         <img
-          src={imageUrl}
+          src={mainImage}
           alt={`Screenshot of ${title}`}
           className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
@@ -55,9 +55,9 @@ const MyWorksBox = ({
               <span>Live Demo</span>
             </a>
           )}
-          {codeUrl && (
+          {githubLink && (
             <a
-              href={codeUrl}
+              href={githubLink}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-2 font-semibold text-slate-300 transition-colors hover:text-slate-100"

@@ -104,7 +104,7 @@ export default function AdminLayout() {
       </Sidebar>
 
       {/* Main Content */}
-      <main className="p-6 bg-muted/20 transition-colors ">
+      <main className="p-2 transition-colors w-full">
         <Outlet />
       </main>
     </div>

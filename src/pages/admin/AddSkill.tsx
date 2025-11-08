@@ -12,7 +12,7 @@ const validateSchema = Yup.object({
 const AddSkill = () => {
   const navigate = useNavigate();
   return (
-    <div className="w-full dark:bg-gray-900 p-4">
+    <div className="w-full p-4">
       <Formik
         initialValues={{ name: "", description: "", iconName: "" }}
         validationSchema={validateSchema}
@@ -28,10 +28,10 @@ const AddSkill = () => {
       >
         {({ isSubmitting }) => (
           <Form
-            className="flex flex-col gap-6 p-8 rounded-xl shadow-lg w-full max-w-md
+            className="flex flex-col gap-6 p-8 rounded-xl shadow-lg w-full max-w-full
                        backdrop-blur-lg transition-all duration-300
                        border border-gray-200
-                       dark:border-white/20 dark:bg-white/5"
+                       dark:border-white/20 dark:bg-white/10"
           >
             {/* --- Form Header --- */}
             <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
