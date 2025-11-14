@@ -1,4 +1,6 @@
-import { useState } from "react";
+// src/pages/EditWork.tsx
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { Loader2, UploadCloud, X } from "lucide-react";
@@ -18,36 +20,53 @@ const validationSchema = Yup.object({
   isLive: Yup.boolean(),
 });
 
-const AddWorks = () => {
+const EditWork = () => {
+  const { id } = useParams(); // /edit-work/:id
+  const [initialValues, setInitialValues] = useState<any | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
+  const [fetching, setFetching] = useState(true);
 
-  const initialValues = {
-    projectName: "",
-    projectDetails: "",
-    usingTech: "",
-    projectLink: "",
-    githubLink: "",
-    isLive: false,
-  };
+  // Fetch existing work data
+  useEffect(() => {
+    const fetchWork = async () => {
+      try {
+        const res = await axios.get(`http://localhost:8000/api/my-works/${id}`);
+        const work = res.data;
 
-  const handleSubmit = async (
-    values: typeof initialValues,
-    { resetForm }: any
-  ) => {
-    if (!file) return;
+        setInitialValues({
+          projectName: work.projectName,
+          projectDetails: work.projectDetails,
+          usingTech: work.usingTech.join(", "),
+          projectLink: work.projectLink,
+          githubLink: work.githubLink || "",
+          isLive: work.isLive || false,
+        });
+
+        setPreview(work.mainImage);
+      } catch (error) {
+        console.error("Failed to fetch work:", error);
+      } finally {
+        setFetching(false);
+      }
+    };
+    fetchWork();
+  }, [id]);
+
+  const handleSubmit = async (values: any) => {
     setLoading(true);
     try {
       const formData = new FormData();
-      formData.append("mainImage", file);
+      if (file) formData.append("mainImage", file);
+
       Object.entries(values).forEach(([key, value]) =>
         formData.append(key, value.toString())
       );
-      await axios.post("http://localhost:8000/api/my-works/add-work", formData);
-      resetForm();
-      setPreview(null);
-      setFile(null);
+
+      await axios.put(`http://localhost:8000/api/my-works/${id}`, formData);
+
+      alert("Project updated successfully!");
     } catch (error) {
       console.error(error);
     } finally {
@@ -55,13 +74,30 @@ const AddWorks = () => {
     }
   };
 
+  if (fetching) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh] text-gray-500">
+        <Loader2 className="animate-spin mr-2" /> Loading project...
+      </div>
+    );
+  }
+
+  if (!initialValues) {
+    return (
+      <div className="text-center text-red-400 mt-20">
+        Failed to load project data.
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-full mx-auto p-8 rounded-2xl backdrop-blur-md shadow-lg border border-gray-200 dark:border-white/10 mt-10 bg-white/70 dark:bg-white/5 transition-colors duration-300">
-      <h2 className="text-2xl font-semibold mb-6 text-center text-white/5 dark:text-gray-100">
-        Add New Work
+      <h2 className="text-2xl font-semibold mb-6 text-center text-gray-900 dark:text-gray-100">
+        Edit Work
       </h2>
 
       <Formik
+        enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
@@ -70,7 +106,7 @@ const AddWorks = () => {
           <Form className="space-y-5">
             {/* Image Upload */}
             <div>
-              <label className="block text-sm font-medium mb-2 text-white/5 dark:text-gray-300">
+              <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                 Project Thumbnail
               </label>
               <Dropzone
@@ -107,7 +143,7 @@ const AddWorks = () => {
                     ) : (
                       <div className="flex flex-col items-center text-gray-600 dark:text-gray-300">
                         <UploadCloud size={32} className="mb-2" />
-                        <p>Drag & drop or click to upload</p>
+                        <p>Drag & drop or click to upload new image</p>
                       </div>
                     )}
                   </div>
@@ -117,7 +153,7 @@ const AddWorks = () => {
 
             {/* Project Name */}
             <div>
-              <label className="block text-sm mb-2 text-white/5 dark:text-gray-300">
+              <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">
                 Project Name
               </label>
               <Field
@@ -134,7 +170,7 @@ const AddWorks = () => {
 
             {/* Project Details */}
             <div>
-              <label className="block text-sm mb-2 text-white/5 dark:text-gray-300">
+              <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">
                 Project Details
               </label>
               <Field
@@ -151,9 +187,9 @@ const AddWorks = () => {
               )}
             </div>
 
-            {/* Using Tech */}
+            {/* Technologies */}
             <div>
-              <label className="block text-sm mb-2 text-white/5 dark:text-gray-300">
+              <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">
                 Technologies (comma separated)
               </label>
               <Field
@@ -167,9 +203,9 @@ const AddWorks = () => {
               )}
             </div>
 
-            {/* Project Link */}
+            {/* Links */}
             <div>
-              <label className="block text-sm mb-2 text-white/5 dark:text-gray-300">
+              <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">
                 Live Project Link
               </label>
               <Field
@@ -185,9 +221,8 @@ const AddWorks = () => {
               )}
             </div>
 
-            {/* GitHub Link */}
             <div>
-              <label className="block text-sm mb-2 text-white/5 dark:text-gray-300">
+              <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">
                 GitHub Link (optional)
               </label>
               <Field
@@ -213,13 +248,13 @@ const AddWorks = () => {
               />
               <label
                 htmlFor="isLive"
-                className="text-sm text-white/5 dark:text-gray-300"
+                className="text-sm text-gray-700 dark:text-gray-300"
               >
                 Is this project live?
               </label>
             </div>
 
-            {/* Submit Button */}
+            {/* Submit */}
             <button
               type="submit"
               disabled={loading}
@@ -227,10 +262,10 @@ const AddWorks = () => {
             >
               {loading ? (
                 <>
-                  <Loader2 className="animate-spin" size={18} /> Uploading...
+                  <Loader2 className="animate-spin" size={18} /> Updating...
                 </>
               ) : (
-                "Add Project"
+                "Save Changes"
               )}
             </button>
           </Form>
@@ -240,4 +275,4 @@ const AddWorks = () => {
   );
 };
 
-export default AddWorks;
+export default EditWork;

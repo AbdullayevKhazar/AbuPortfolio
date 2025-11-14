@@ -1,54 +1,51 @@
+import { useEffect, useState } from "react";
 import Container from "./Container";
 import MyWorksBox from "./MyWorksBox";
+import axios from "axios";
 
-const myProjects = [
-  {
-    title: "E-Commerce Platform",
-    description:
-      "A full-stack e-commerce website built with the MERN stack, featuring product search, cart, and payment integration.",
-    imageUrl: "https://via.placeholder.com/600x400", // Replace with your project image
-    technologies: ["React", "Node.js", "Express", "MongoDB", "Stripe"],
-    liveUrl: "https://example.com",
-    codeUrl: "https://github.com/your-username/project-repo",
-  },
-  {
-    title: "Portfolio Website",
-    description:
-      "My personal portfolio to showcase my skills and projects. Designed in Figma and built with Next.js.",
-    imageUrl: "https://via.placeholder.com/600x400", // Replace with your project image
-    technologies: ["Next.js", "React", "Tailwind CSS", "Framer Motion"],
-    liveUrl: "https://example.com",
-    codeUrl: "https://github.com/your-username/portfolio-repo",
-  },
-  {
-    title: "Weather App",
-    description:
-      "A clean and simple weather application that provides real-time weather data using a third-party API.",
-    imageUrl: "https://via.placeholder.com/600x400", // Replace with your project image
-    technologies: ["React", "API", "Geolocation", "CSS"],
-    liveUrl: "https://example.com",
-    codeUrl: "https://github.com/your-username/weather-repo",
-  },
-];
-
+interface Works {
+  _id: string;
+  projectName: string;
+  projectDetails: string;
+  mainImage: string;
+  usingTech: string[];
+  projectLink?: string;
+  githubLink: string;
+}
 const PortfolioPage = () => {
+  const [works, setWorks] = useState<Works[]>([]);
+  useEffect(() => {
+    const fetchWorks = async () => {
+      try {
+        const res = await axios.get("http://localhost:8000/api/my-works/");
+        setWorks(res.data);
+      } catch {}
+    };
+    fetchWorks();
+  }, []);
+
   return (
     <Container>
-      <h2 className="text-4xl font-bold text-[#eeeeee]">My Works</h2>
+      <h2 className="text-4xl font-bold text-[#eeeeee]">My Real Works</h2>
 
-      {/* Responsive Grid Layout */}
       <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {myProjects.map((project, index) => (
-          <MyWorksBox
-            key={index}
-            title={project.title}
-            description={project.description}
-            imageUrl={project.imageUrl}
-            technologies={project.technologies}
-            liveUrl={project.liveUrl}
-            codeUrl={project.codeUrl}
-          />
-        ))}
+        {works &&
+          works.map((project) => (
+            <MyWorksBox
+              id={project._id}
+              key={project._id}
+              title={project.projectName}
+              description={project.projectDetails}
+              mainImage={project.mainImage}
+              technologies={project.usingTech}
+              liveUrl={project.projectLink}
+              githubLink={project.githubLink}
+              isAdmin={false}
+              onDelete={function (_: string): void {
+                throw new Error("Function not implemented.");
+              }}
+            />
+          ))}
       </div>
     </Container>
   );

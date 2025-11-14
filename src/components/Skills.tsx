@@ -73,7 +73,7 @@ const Skills = () => {
 
   return (
     <Container>
-      <div id="skills" className="min-h-[80dvh] mt-[300px] dark">
+      <div id="skills" className="min-h-[80dvh] mt-20 dark">
         <div className="mb-20">
           <h1 className="text-[#eeeeee] text-4xl font-bold">Current Skills</h1>
         </div>

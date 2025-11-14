@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import SkillsBox from "../../components/SkillsBox";
 import axios from "axios";
 
-// It's good practice to assume your API provides a unique 'id'
 interface Skill {
   id: string | number;
   name: string;
   description: string;
-  iconName: string; // Note: See bonus tip below
+  iconName: string;
   _id: string;
 }
 
@@ -15,13 +15,14 @@ const AllSkills = () => {
   const [skills, setSkills] = useState<Skill[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchSkills = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        const res = await axios("http://localhost:8000/api/skills");
+        const res = await axios.get("http://localhost:8000/api/skills");
         setSkills(res.data);
       } catch (err) {
         console.error("Failed to fetch skills:", err);
@@ -30,8 +31,13 @@ const AllSkills = () => {
         setIsLoading(false);
       }
     };
+
     fetchSkills();
   }, []);
+
+  const handleEditClick = (id: string) => {
+    navigate(`/admin/edit-skill/${id}`);
+  };
 
   if (isLoading) {
     return (
@@ -57,14 +63,19 @@ const AllSkills = () => {
       {skills.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {skills.map((skill) => (
-            <SkillsBox
-              key={skill.id || skill.name}
-              name={skill.name}
-              description={skill.description}
-              iconName={skill.iconName}
-              forAdmin={true}
-              id={skill._id}
-            />
+            <div
+              key={skill._id}
+              onClick={() => handleEditClick(skill._id)}
+              className="cursor-pointer"
+            >
+              <SkillsBox
+                name={skill.name}
+                description={skill.description}
+                iconName={skill.iconName}
+                forAdmin={true}
+                id={skill._id}
+              />
+            </div>
           ))}
         </div>
       ) : (

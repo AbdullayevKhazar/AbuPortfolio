@@ -31,7 +31,7 @@ const AddSkill = () => {
             className="flex flex-col gap-6 p-8 rounded-xl shadow-lg w-full max-w-full
                        backdrop-blur-lg transition-all duration-300
                        border border-gray-200
-                       dark:border-white/20 dark:bg-white/10"
+                       dark:border-white/10 dark:bg-white/5"
           >
             {/* --- Form Header --- */}
             <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white">
@@ -51,8 +51,8 @@ const AddSkill = () => {
                 type="text"
                 className="w-full px-4 py-2 rounded-md border transition-all duration-300
                            text-gray-900 dark:text-white
-                           bg-white/50 dark:bg-white/10
-                           border-gray-300 dark:border-white/20
+                           bg-white/50 dark:bg-white/5
+                           border-gray-300 dark:border-white/10
                            focus:border-blue-500 focus:ring-blue-500
                            dark:focus:border-blue-400 dark:focus:ring-blue-400
                            focus:ring-2 focus:outline-none"
@@ -78,8 +78,8 @@ const AddSkill = () => {
                 rows={3}
                 className="w-full px-4 py-2 rounded-md border transition-all duration-300
                            text-gray-900 dark:text-white
-                           bg-white/50 dark:bg-white/10
-                           border-gray-300 dark:border-white/20
+                           bg-white/50 dark:bg-white/5
+                           border-gray-300 dark:border-white/10
                            focus:border-blue-500 focus:ring-blue-500
                            dark:focus:border-blue-400 dark:focus:ring-blue-400
                            focus:ring-2 focus:outline-none resize-none"
@@ -104,8 +104,8 @@ const AddSkill = () => {
                 type="text" // Corrected from "iconName"
                 className="w-full px-4 py-2 rounded-md border transition-all duration-300
                            text-gray-900 dark:text-white
-                           bg-white/50 dark:bg-white/10
-                           border-gray-300 dark:border-white/20
+                           bg-white/50 dark:bg-white/5
+                           border-gray-300 dark:border-white/10
                            focus:border-blue-500 focus:ring-blue-500
                            dark:focus:border-blue-400 dark:focus:ring-blue-400
                            focus:ring-2 focus:outline-none"
