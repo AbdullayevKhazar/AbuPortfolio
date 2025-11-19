@@ -18,17 +18,20 @@ const socialLinks = [
 
 const Footer = () => {
   return (
-    <footer className="min-h-auto bg-[#0F0E0E]  relative text-white pt-20">
+    <footer className="min-h-auto bg-white text-[#1a1a1a] dark:bg-[#0F0E0E]  relative  pt-20 dark:text-white">
       <div className="absolute top-0 left-0 w-full h-full z-0 grid grid-cols-20">
         {Array.from({ length: 20 }).map((_, index) => (
-          <div key={index} className="border-l border-gray-50/1 h-full"></div>
+          <div
+            key={index}
+            className="border-l border-black/4 dark:border-gray-50/1 h-full"
+          ></div>
         ))}
       </div>
       <Container>
-        <div className="relative z-10 border border-white/10 bg-[#0F0E0E] rounded-2xl p-8 md:p-16">
+        <div className="relative z-10 border bg-white shadow-lg shadow-black/8 dark:border-white/10 dark:bg-[#0F0E0E] dark:shadow-white/2 rounded-2xl p-8 md:p-16">
           <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-10">
             <div className="max-w-md">
-              <h3 className="text-2xl lg:text-3xl font-bold text-white mb-3">
+              <h3 className="text-2xl lg:text-3xl font-bold text-[#1a1a1a] dark:text-white mb-3">
                 Khazar Abdullayev
               </h3>
               <p className="text-gray-400">
@@ -38,13 +41,13 @@ const Footer = () => {
             </div>
             <div className="flex sm:flex-row gap-10 sm:gap-20">
               <div>
-                <h4 className="font-semibold text-white mb-4">Navigate</h4>
+                <h4 className="font-semibold dark:text-white mb-4">Navigate</h4>
                 <ul className="space-y-2">
                   {navLinks.map((link) => (
                     <li key={link.title}>
                       <a
                         href={link.href}
-                        className="text-gray-400 hover:text-white transition-colors"
+                        className="text-gray-400 hover:text-[#1a1a1a] dark:hover:text-white transition-colors"
                       >
                         {link.title}
                       </a>
@@ -53,7 +56,7 @@ const Footer = () => {
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold text-white mb-4">Connect</h4>
+                <h4 className="font-semibold  dark:text-white mb-4">Connect</h4>
                 <ul className="space-y-2">
                   {socialLinks.map((link) => (
                     <li key={link.title}>
@@ -61,7 +64,7 @@ const Footer = () => {
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-white transition-colors"
+                        className="text-gray-400 hover:text-[#1a1a1a] dark:hover:text-white transition-colors"
                       >
                         {link.title}
                       </a>
@@ -80,8 +83,8 @@ const Footer = () => {
               reserved.
             </p>
             <p className="text-sm text-gray-500 text-center md:text-right">
-              Made by <span className="text-white">Khazar</span>{" "}
-              <span className="text-white">Abdullayev</span>
+              Made by <span className="dark:text-white">Khazar</span>{" "}
+              <span className="dark:text-white">Abdullayev</span>
             </p>
           </div>
         </div>

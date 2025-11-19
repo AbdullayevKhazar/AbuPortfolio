@@ -26,9 +26,11 @@ const PortfolioPage = () => {
 
   return (
     <Container>
-      <h2 className="text-4xl font-bold text-[#eeeeee]">My Real Works</h2>
+      <h2 className="text-4xl font-bold text-[#1a1a1a] dark:text-[#eeeeee]">
+        My Real Works
+      </h2>
 
-      <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-12 grid gap-8 sm:grid-cols-1 md:grid-cols-2">
         {works &&
           works.map((project) => (
             <MyWorksBox

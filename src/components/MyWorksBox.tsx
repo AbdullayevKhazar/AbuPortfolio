@@ -12,8 +12,8 @@ const MyWorksBox = ({
   technologies,
   liveUrl,
   githubLink,
-  isAdmin = false, // 👈 determines behavior
-  onDelete, // optional callback for admin deletion
+  isAdmin = false,
+  onDelete,
 }: {
   id: string;
   title: string;
@@ -43,7 +43,7 @@ const MyWorksBox = ({
 
   // ✅ If admin, don’t wrap with Link
   const Wrapper: any = isAdmin ? "div" : Link;
-  const wrapperProps: any = isAdmin ? {} : { to: `project/${id}` };
+  const wrapperProps: any = isAdmin ? {} : { to: `../project/${id}` };
 
   return (
     <Wrapper
@@ -92,7 +92,7 @@ const MyWorksBox = ({
                   onClick={(e) => e.stopPropagation()}
                 >
                   <FiExternalLink />
-                  <span>Live Demo</span>
+                  <span>Look Website</span>
                 </a>
               )}
               {githubLink && (

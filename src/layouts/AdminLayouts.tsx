@@ -13,7 +13,17 @@ import {
   SidebarMenuButton,
 } from "../components/ui/sidebar";
 import { Button } from "../components/ui/button";
-import { Package, Users, LogOut, Moon, Sun, Code } from "lucide-react";
+import {
+  Package,
+  Users,
+  LogOut,
+  Moon,
+  Sun,
+  Code,
+  Workflow,
+  Plus,
+  GalleryHorizontalEnd,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 export default function AdminLayout() {
@@ -42,7 +52,13 @@ export default function AdminLayout() {
     { name: "All Skills", icon: Code, path: "/admin" },
     { name: "Add Skills", icon: Package, path: "/admin/add-skill" },
     { name: "All Works", icon: Users, path: "/admin/all-works" },
-    { name: "Add Works", icon: Users, path: "/admin/add-works" },
+    { name: "Add Works", icon: Workflow, path: "/admin/add-works" },
+    { name: "Add Experience", icon: Plus, path: "/admin/add-experience" },
+    {
+      name: "Experience",
+      icon: GalleryHorizontalEnd,
+      path: "/admin/experience",
+    },
   ];
 
   return (
