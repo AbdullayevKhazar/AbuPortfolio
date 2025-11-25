@@ -96,7 +96,7 @@ const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
             to="/"
             className="font-bold text-lg text-[#1a1a1a] dark:text-white"
           >
-            Abufolio
+            XAB
           </Link>
 
           <button

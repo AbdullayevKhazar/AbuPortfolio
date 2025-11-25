@@ -25,8 +25,8 @@ const Skills = () => {
   }, []);
 
   return (
-    <Container>
-      <div id="skills" className="min-h-[80dvh] mt-20">
+    <Container className={""}>
+      <div id="skills" className="min-h-[80dvh] mb-20">
         <div className="mb-20">
           <h1 className="text-[#1a1a1a] dark:text-[#eeeeee] text-4xl font-bold">
             Current Skills

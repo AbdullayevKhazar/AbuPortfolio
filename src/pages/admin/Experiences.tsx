@@ -23,8 +23,8 @@ const Experiences = () => {
     try {
       const res = await axios.get("http://localhost:8000/api/experiences");
       setData(res.data);
-    } catch (err: any) {
-      setError("Failed to load experiences");
+    } catch (err) {
+      setError("Failed to load experiences" + err);
     } finally {
       setLoading(false);
     }

@@ -7,6 +7,16 @@ import { Loader2, UploadCloud, X } from "lucide-react";
 import Dropzone from "react-dropzone";
 import axios from "axios";
 
+interface InitialValue {
+  projectName: string;
+  projectDetails: string;
+  usingTech: string;
+  projectLink: string;
+  githubLink: string;
+  isLive: boolean;
+}
+type FormValues = InitialValue;
+
 const validationSchema = Yup.object({
   projectName: Yup.string().required("Project name is required"),
   projectDetails: Yup.string()
@@ -20,15 +30,17 @@ const validationSchema = Yup.object({
   isLive: Yup.boolean(),
 });
 
+// helper → TS error olmasın
+const getError = (err: any) => (typeof err === "string" ? err : "");
+
 const EditWork = () => {
-  const { id } = useParams(); // /edit-work/:id
-  const [initialValues, setInitialValues] = useState<any | null>(null);
+  const { id } = useParams();
+  const [initialValues, setInitialValues] = useState<InitialValue | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
 
-  // Fetch existing work data
   useEffect(() => {
     const fetchWork = async () => {
       try {
@@ -54,14 +66,16 @@ const EditWork = () => {
     fetchWork();
   }, [id]);
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: FormValues) => {
     setLoading(true);
     try {
       const formData = new FormData();
+
       if (file) formData.append("mainImage", file);
 
+      // 🔥 Düz formData append (artıq səhv deyil!)
       Object.entries(values).forEach(([key, value]) =>
-        formData.append(key, value.toString())
+        formData.append(key, String(value))
       );
 
       await axios.put(`http://localhost:8000/api/my-works/${id}`, formData);
@@ -109,6 +123,7 @@ const EditWork = () => {
               <label className="block text-sm font-medium mb-2 text-gray-700 dark:text-gray-300">
                 Project Thumbnail
               </label>
+
               <Dropzone
                 onDrop={(acceptedFiles) => {
                   const file = acceptedFiles[0];
@@ -161,9 +176,9 @@ const EditWork = () => {
                 name="projectName"
                 className="w-full rounded-lg border border-gray-300 dark:border-white/5 bg-white dark:bg-white/5 p-2 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-sky-500 outline-none transition"
               />
-              {errors.projectName && touched.projectName && (
+              {touched.projectName && (
                 <p className="text-red-400 text-sm mt-1">
-                  {errors.projectName}
+                  {getError(errors.projectName)}
                 </p>
               )}
             </div>
@@ -180,9 +195,9 @@ const EditWork = () => {
                 maxLength={600}
                 className="w-full rounded-lg border border-gray-300 dark:border-white/5 bg-white dark:bg-white/5 p-2 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-sky-500 outline-none transition"
               />
-              {errors.projectDetails && touched.projectDetails && (
+              {touched.projectDetails && (
                 <p className="text-red-400 text-sm mt-1">
-                  {errors.projectDetails}
+                  {getError(errors.projectDetails)}
                 </p>
               )}
             </div>
@@ -198,12 +213,14 @@ const EditWork = () => {
                 placeholder="React, Node.js, TailwindCSS"
                 className="w-full rounded-lg border border-gray-300 dark:border-white/5 bg-white dark:bg-white/5 p-2 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-sky-500 outline-none transition"
               />
-              {errors.usingTech && touched.usingTech && (
-                <p className="text-red-400 text-sm mt-1">{errors.usingTech}</p>
+              {touched.usingTech && (
+                <p className="text-red-400 text-sm mt-1">
+                  {getError(errors.usingTech)}
+                </p>
               )}
             </div>
 
-            {/* Links */}
+            {/* Live Link */}
             <div>
               <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">
                 Live Project Link
@@ -214,13 +231,14 @@ const EditWork = () => {
                 placeholder="https://example.com"
                 className="w-full rounded-lg border border-gray-300 dark:border-white/5 bg-white dark:bg-white/5 p-2 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-sky-500 outline-none transition"
               />
-              {errors.projectLink && touched.projectLink && (
+              {touched.projectLink && (
                 <p className="text-red-400 text-sm mt-1">
-                  {errors.projectLink}
+                  {getError(errors.projectLink)}
                 </p>
               )}
             </div>
 
+            {/* GitHub Link */}
             <div>
               <label className="block text-sm mb-2 text-gray-700 dark:text-gray-300">
                 GitHub Link (optional)
@@ -231,12 +249,14 @@ const EditWork = () => {
                 placeholder="https://github.com/username/project"
                 className="w-full rounded-lg border border-gray-300 dark:border-white/5 bg-white dark:bg-white/5 p-2 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-sky-500 outline-none transition"
               />
-              {errors.githubLink && touched.githubLink && (
-                <p className="text-red-400 text-sm mt-1">{errors.githubLink}</p>
+              {touched.githubLink && (
+                <p className="text-red-400 text-sm mt-1">
+                  {getError(errors.githubLink)}
+                </p>
               )}
             </div>
 
-            {/* isLive Toggle */}
+            {/* isLive */}
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"

@@ -25,7 +25,7 @@ const Education = () => {
       const res = await axios.get("http://localhost:8000/api/educations");
       setEducations(res.data.data || res.data || []);
     } catch (err) {
-      setError("Failed to load educations.");
+      setError("Failed to load educations." + err);
     } finally {
       setLoading(false);
     }

@@ -19,18 +19,20 @@ const PortfolioPage = () => {
       try {
         const res = await axios.get("http://localhost:8000/api/my-works/");
         setWorks(res.data);
-      } catch {}
+      } catch {
+        console.log("");
+      }
     };
     fetchWorks();
   }, []);
 
   return (
-    <Container>
+    <Container className={""}>
       <h2 className="text-4xl font-bold text-[#1a1a1a] dark:text-[#eeeeee]">
         My Real Works
       </h2>
 
-      <div className="mt-12 grid gap-8 sm:grid-cols-1 md:grid-cols-2">
+      <div className="mt-12 grid gap-8 sm:grid-cols-1 md:grid-cols-2 mb-20">
         {works &&
           works.map((project) => (
             <MyWorksBox
@@ -43,7 +45,7 @@ const PortfolioPage = () => {
               liveUrl={project.projectLink}
               githubLink={project.githubLink}
               isAdmin={false}
-              onDelete={function (_: string): void {
+              onDelete={function (): void {
                 throw new Error("Function not implemented.");
               }}
             />

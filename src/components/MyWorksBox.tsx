@@ -3,6 +3,7 @@
 import { FiExternalLink, FiGithub, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import type React from "react";
 
 const MyWorksBox = ({
   id,
@@ -42,8 +43,10 @@ const MyWorksBox = ({
   };
 
   // ✅ If admin, don’t wrap with Link
-  const Wrapper: any = isAdmin ? "div" : Link;
-  const wrapperProps: any = isAdmin ? {} : { to: `../project/${id}` };
+  const Wrapper: React.ElementType = isAdmin ? "div" : Link;
+  const wrapperProps: Record<string, unknown> = isAdmin
+    ? {}
+    : { to: `../project/${id}` };
 
   return (
     <Wrapper

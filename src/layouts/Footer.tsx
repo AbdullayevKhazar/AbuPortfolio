@@ -14,12 +14,16 @@ const socialLinks = [
     title: "LinkedIn",
     href: "https://www.linkedin.com/in/x%C9%99z%C9%99rabdullayev/",
   },
+  {
+    title: "Youtube",
+    href: "https://www.youtube.com/@inlineflexbox",
+  },
 ];
 // ----------------------------------------
 
 const Footer = () => {
   return (
-    <footer className="min-h-auto bg-white text-[#1a1a1a] dark:bg-[#0F0E0E]  relative  pt-20 dark:text-white">
+    <footer className="min-h-auto bg-white text-[#1a1a1a] dark:bg-[#0F0E0E]  relative  py-20 dark:text-white">
       <div className="absolute top-0 left-0 w-full h-full z-0 grid grid-cols-20">
         {Array.from({ length: 20 }).map((_, index) => (
           <div
@@ -28,7 +32,7 @@ const Footer = () => {
           ></div>
         ))}
       </div>
-      <Container>
+      <Container className="py-10">
         <div className="relative z-10 border bg-white shadow-lg shadow-black/8 dark:border-white/10 dark:bg-[#0F0E0E] dark:shadow-white/2 rounded-2xl p-8 md:p-16">
           <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-10">
             <div className="max-w-md">
@@ -78,12 +82,19 @@ const Footer = () => {
 
           <hr className="border-white/10" />
 
-          <div className="flex flex-col md:flex-row justify-between items-center pt-8 gap-4">
-            <p className="text-sm text-gray-500 text-center md:text-left">
-              © {new Date().getFullYear()} Khazar Abullayev. All rights
-              reserved.
-            </p>
-            <p className="text-sm text-gray-500 text-center md:text-right">
+          <div className="flex flex-col md:flex-row text-xs justify-between items-center pt-8 gap-4 text-gray-600 dark:text-gray-300">
+            <div className="flex items-center gap-2">
+              <span>© 2025 Licensed</span>
+              <a
+                href="https://creativecommons.org/licenses/by/4.0/"
+                target="_blank"
+                className="underline text-blue-500 dark:text-blue-400"
+              >
+                Creative Commons BY-NC 4.0
+              </a>
+            </div>
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 text-center md:text-right">
               Made by <span className="dark:text-white">Khazar</span>{" "}
               <span className="dark:text-white">Abdullayev</span>
             </p>

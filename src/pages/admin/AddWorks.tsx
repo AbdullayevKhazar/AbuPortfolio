@@ -34,7 +34,7 @@ const AddWorks = () => {
 
   const handleSubmit = async (
     values: typeof initialValues,
-    { resetForm }: any
+    { resetForm }: { resetForm: () => void }
   ) => {
     if (!file) return;
     setLoading(true);

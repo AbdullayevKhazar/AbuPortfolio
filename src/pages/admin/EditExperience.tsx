@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { Formik, Form, Field, FieldArray } from "formik";
@@ -44,7 +44,7 @@ const EditExperience = () => {
 
   useEffect(() => {
     fetchExperience();
-  }, []);
+  }, [id]);
 
   if (!initialValues) return <p className="text-center py-10">Loading...</p>;
 
@@ -135,7 +135,7 @@ const EditExperience = () => {
               <Field
                 type="checkbox"
                 name="isCurrentJob"
-                onChange={(e: any) => {
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   setFieldValue("isCurrentJob", e.target.checked);
                   if (e.target.checked) setFieldValue("endDate", "");
                 }}

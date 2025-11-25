@@ -2,15 +2,6 @@ import { Earth, MoveRight } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Header = () => {
-  const handleDownload = () => {
-    const link = document.createElement("a");
-    link.href = "/Xezer_CV.pdf";
-    link.download = "Abdullayev.pdf";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
   return (
     <section className="w-full min-h-dvh relative flex items-center justify-center flex-col overflow-hidden px-4 sm:px-6">
       <div className="absolute top-0 left-0 w-full h-full z-0 grid grid-cols-20">
@@ -25,7 +16,7 @@ const Header = () => {
           Based in Azerbaijan
         </p>
 
-        <h1 className="z-10 text-[#1a1a1a] dark:text-white text-2xl sm:text-4xl md:text-5xl font-bold mt-2">
+        <h1 className="z-10 text-[#1a1a1a] dark:text-white text-4xl md:text-5xl font-bold mt-2">
           Quality
           <span className="text-[#59848e] dark:text-[#7fbdcb] block sm:inline px-1 sm:px-2 text-3xl sm:text-[40px]">
             Design & Web Development
@@ -49,13 +40,14 @@ const Header = () => {
           <MoveRight size={14} />
         </Link>
 
-        <button
-          onClick={handleDownload}
+        <a
+          href="https://drive.google.com/file/d/1ognAaa-6CJiK_3TzirZ8NNNS5d0q3Z-j/view?usp=sharing"
+          target="_blank"
           className="text-xs sm:text-sm text-[#59848e] dark:text-[#7fbdcb] flex items-center justify-center gap-1 rounded-md dark:hover:text-white transition-colors duration-300 cursor-pointer"
         >
           Look My CV
           <Earth size={14} />
-        </button>
+        </a>
       </div>
 
       <span className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-[#1a1a1a] dark:text-white/50 text-xs sm:text-sm z-10">

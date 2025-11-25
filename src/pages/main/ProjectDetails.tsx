@@ -33,7 +33,7 @@ const ProjectDetails = () => {
       }
     };
     fetchDetails();
-  }, []);
+  }, [id]);
 
   useEffect(() => {
     document.documentElement.scrollTop = 0;
