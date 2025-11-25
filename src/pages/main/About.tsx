@@ -26,7 +26,7 @@ interface Education {
 }
 
 const About = () => {
-  const [tab, setTab] = useState("experiences");
+  const [tab, setTab] = useState("experience");
 
   const [data, setData] = useState<Education[] | Experience[]>([]);
   const [loading, setLoading] = useState(true);
@@ -92,11 +92,11 @@ const About = () => {
           "
           >
             <button
-              onClick={() => setTab("experiences")}
+              onClick={() => setTab("experience")}
               className={`
               flex-1 py-2 rounded-lg transition-all duration-300
               ${
-                tab === "experiences"
+                tab === "experience"
                   ? "bg-[#eeeeee] dark:bg-black/30 text-[#1a1a1a] dark:text-[#eeeeee]"
                   : "text-[#1a1a1a]/50 dark:text-[#eeeeee]/40 hover:bg-[#1a1a1a]/10 dark:hover:bg-[#eeeeee]/10"
               }
@@ -106,11 +106,11 @@ const About = () => {
             </button>
 
             <button
-              onClick={() => setTab("educations")}
+              onClick={() => setTab("education")}
               className={`
               flex-1 py-2 rounded-lg transition-all duration-300
               ${
-                tab === "educations"
+                tab === "education"
                   ? "bg-[#eeeeee] dark:bg-black/30 text-[#1a1a1a] dark:text-[#eeeeee]"
                   : "text-[#1a1a1a]/50 dark:text-[#eeeeee]/40 hover:bg-[#1a1a1a]/10 dark:hover:bg-[#eeeeee]/10"
               }
@@ -131,7 +131,7 @@ const About = () => {
         "
           >
             {/* Work Experience */}
-            {tab === "experiences" && data.length > 0 && (
+            {tab === "experience" && data.length > 0 && (
               <div className="text-[#1a1a1a] dark:text-[#eeeeee] space-y-8">
                 {loading && <p>Loading work experience...</p>}
                 {error && <p className="text-red-500">{error}</p>}
@@ -176,7 +176,7 @@ const About = () => {
             )}
 
             {/* Education */}
-            {tab === "educations" && data.length > 0 && (
+            {tab === "education" && data.length > 0 && (
               <div className="text-[#1a1a1a] dark:text-[#eeeeee] space-y-8">
                 {loading && <p>Loading education...</p>}
 
