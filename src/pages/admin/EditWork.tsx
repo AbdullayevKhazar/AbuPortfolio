@@ -45,7 +45,7 @@ const EditWork = () => {
     const fetchWork = async () => {
       try {
         const res = await axios.get(
-          `https://api.xab.net.az/api/my-works/${id}`
+          `https://abufoliobackend-1.onrender.com/my-works/${id}`
         );
         const work = res.data;
 
@@ -80,7 +80,10 @@ const EditWork = () => {
         formData.append(key, String(value))
       );
 
-      await axios.put(`https://api.xab.net.az/api/my-works/${id}`, formData);
+      await axios.put(
+        `https://abufoliobackend-1.onrender.com/my-works/${id}`,
+        formData
+      );
 
       alert("Project updated successfully!");
     } catch (error) {

@@ -27,7 +27,10 @@ const AddEducation = () => {
           isCurrent: Yup.boolean(),
         })}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          await axios.post("https://api.xab.net.az/api/educations", values);
+          await axios.post(
+            "https://abufoliobackend-1.onrender.com/educations",
+            values
+          );
           setSubmitting(false);
           resetForm();
         }}

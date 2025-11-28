@@ -17,11 +17,14 @@ const AddSkill = () => {
         initialValues={{ name: "", description: "", iconName: "" }}
         validationSchema={validateSchema}
         onSubmit={async (values, { setSubmitting }) => {
-          await axios.post("https://api.xab.net.az/api/skills/add-skill", {
-            name: values.name,
-            description: values.description,
-            iconName: values.iconName,
-          });
+          await axios.post(
+            "https://abufoliobackend-1.onrender.com/skills/add-skill",
+            {
+              name: values.name,
+              description: values.description,
+              iconName: values.iconName,
+            }
+          );
           setSubmitting(false);
           navigate(-1);
         }}

@@ -16,7 +16,9 @@ const AllWorks = () => {
 
   useEffect(() => {
     const fetchWorks = async () => {
-      const res = await axios.get("https://api.xab.net.az/api/my-works");
+      const res = await axios.get(
+        "https://abufoliobackend-1.onrender.com/my-works"
+      );
       setWorks(res.data);
     };
     fetchWorks();

@@ -34,7 +34,7 @@ const EditExperience = () => {
   const fetchExperience = async () => {
     try {
       const res = await axios.get(
-        `https://api.xab.net.az/api/experiences/${id}`
+        `https://abufoliobackend-1.onrender.com/experiences/${id}`
       );
       setInitialValues(res.data);
     } catch (err) {
@@ -50,7 +50,10 @@ const EditExperience = () => {
 
   const handleSubmit = async (values: Experience) => {
     try {
-      await axios.put(`https://api.xab.net.az/api/experiences/${id}`, values);
+      await axios.put(
+        `https://abufoliobackend-1.onrender.com/experiences/${id}`,
+        values
+      );
       navigate("/admin/experience");
     } catch (err) {
       console.log(err);
