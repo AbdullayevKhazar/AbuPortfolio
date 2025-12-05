@@ -21,9 +21,7 @@ const Experiences = () => {
 
   const fetchExperiences = async () => {
     try {
-      const res = await axios.get(
-        "https://abufoliobackend-1.onrender.com/api/experiences"
-      );
+      const res = await axios.get("https://api.xab.net.az/api/experiences");
       setData(res.data);
     } catch (err) {
       setError("Failed to load experiences" + err);
@@ -32,9 +30,7 @@ const Experiences = () => {
     }
   };
   const handleDelete = async (id: string) => {
-    await axios.delete(
-      `https://abufoliobackend-1.onrender.com/api/experiences/${id}`
-    );
+    await axios.delete(`https://api.xab.net.az/api/experiences/${id}`);
     fetchExperiences();
   };
   useEffect(() => {

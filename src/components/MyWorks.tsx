@@ -17,9 +17,7 @@ const PortfolioPage = () => {
   useEffect(() => {
     const fetchWorks = async () => {
       try {
-        const res = await axios.get(
-          "https://abufoliobackend-1.onrender.com/api/my-works/"
-        );
+        const res = await axios.get("https://api.xab.net.az/api/my-works/");
         setWorks(res.data);
       } catch {
         console.log("");

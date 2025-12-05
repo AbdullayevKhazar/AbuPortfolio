@@ -35,9 +35,7 @@ const About = () => {
   const fetchExperiences = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(
-        `https://abufoliobackend-1.onrender.com/api/${tab}`
-      );
+      const res = await axios.get(`https://api.xab.net.az/api/${tab}`);
       setData(res.data);
     } catch (err) {
       setError("Failed to load data." + err);

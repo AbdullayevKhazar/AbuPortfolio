@@ -45,7 +45,7 @@ const AddWorks = () => {
         formData.append(key, value.toString())
       );
       await axios.post(
-        "https://abufoliobackend-1.onrender.com/api/my-works/add-work",
+        "https://api.xab.net.az/api/my-works/add-work",
         formData
       );
       resetForm();

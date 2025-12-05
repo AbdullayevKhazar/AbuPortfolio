@@ -24,7 +24,7 @@ const ProjectDetails = () => {
       setError(null);
       try {
         const res = await axios.get(
-          `https://abufoliobackend-1.onrender.com/api/my-works/${id}`
+          `https://api.xab.net.az/api/my-works/${id}`
         );
         setWork(res.data);
       } catch (err) {

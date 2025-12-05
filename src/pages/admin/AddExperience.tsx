@@ -42,10 +42,7 @@ const AddExperience = () => {
       }}
       validationSchema={validationSchema}
       onSubmit={(values) => {
-        axios.post(
-          "https://abufoliobackend-1.onrender.com/api/experiences",
-          values
-        );
+        axios.post("https://api.xab.net.az/api/experiences", values);
       }}
     >
       {({ values, errors, touched }) => (

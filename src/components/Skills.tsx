@@ -15,7 +15,7 @@ const Skills = () => {
     const fetchSkills = async () => {
       try {
         const res = await axios.get<SkillsProps[]>(
-          "https://abufoliobackend-1.onrender.com/api/skills"
+          "https://api.xab.net.az/api/skills"
         );
         setSkills(res.data);
       } catch (error) {

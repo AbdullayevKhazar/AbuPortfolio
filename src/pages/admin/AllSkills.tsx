@@ -22,9 +22,7 @@ const AllSkills = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const res = await axios.get(
-          "https://abufoliobackend-1.onrender.com/api/skills"
-        );
+        const res = await axios.get("https://api.xab.net.az/api/skills");
         setSkills(res.data);
       } catch (err) {
         console.error("Failed to fetch skills:", err);
