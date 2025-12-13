@@ -1,3 +1,5 @@
+import axios from "axios";
+import { Loader } from "lucide-react";
 import { useState } from "react";
 
 const Drawer = ({
@@ -12,6 +14,7 @@ const Drawer = ({
     email: "",
     message: "",
   });
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -19,10 +22,12 @@ const Drawer = ({
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log("Form submitted:", formData);
+    setLoading(true);
+    await axios.post("https://api.xab.net.az/api/contact", formData);
+    setFormData({ name: "", email: "", message: "" });
+    setLoading(false);
 
     onClose();
   };
@@ -80,7 +85,11 @@ const Drawer = ({
               type="submit"
               className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 cursor-pointer transition w-[25  0px]"
             >
-              Send Message
+              {loading ? (
+                <Loader className="animate-spin mx-auto" />
+              ) : (
+                "Send Message"
+              )}
             </button>
           </div>
         </form>
