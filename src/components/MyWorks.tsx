@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Container from "./Container";
 import MyWorksBox from "./MyWorksBox";
 import axios from "axios";
+import MyWorksBoxSkeleton from "./MyWorksBoxSkeleton";
 
 interface Works {
   _id: string;
@@ -14,11 +15,13 @@ interface Works {
 }
 const PortfolioPage = () => {
   const [works, setWorks] = useState<Works[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
     const fetchWorks = async () => {
       try {
         const res = await axios.get("https://api.xab.net.az/api/my-works/");
         setWorks(res.data);
+        setIsLoading(false);
       } catch {
         console.log("");
       }
@@ -33,23 +36,24 @@ const PortfolioPage = () => {
       </h2>
 
       <div className="mt-12 grid gap-8 sm:grid-cols-1 md:grid-cols-2 mb-20">
-        {works &&
-          works.map((project) => (
-            <MyWorksBox
-              id={project._id}
-              key={project._id}
-              title={project.projectName}
-              description={project.projectDetails}
-              mainImage={project.mainImage}
-              technologies={project.usingTech}
-              liveUrl={project.projectLink}
-              githubLink={project.githubLink}
-              isAdmin={false}
-              onDelete={function (): void {
-                throw new Error("Function not implemented.");
-              }}
-            />
-          ))}
+        {isLoading
+          ? [...Array(2)].map((_, i) => <MyWorksBoxSkeleton key={i} />)
+          : works.map((project) => (
+              <MyWorksBox
+                id={project._id}
+                key={project._id}
+                title={project.projectName}
+                description={project.projectDetails}
+                mainImage={project.mainImage}
+                technologies={project.usingTech}
+                liveUrl={project.projectLink}
+                githubLink={project.githubLink}
+                isAdmin={false}
+                onDelete={function (): void {
+                  throw new Error("Function not implemented.");
+                }}
+              />
+            ))}
       </div>
     </Container>
   );

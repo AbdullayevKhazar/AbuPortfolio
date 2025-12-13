@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import SkillsBox from "./SkillsBox";
 import axios from "axios";
 import Container from "./Container";
+import SkillsBoxSkeleton from "./SkillBoxSkeleton";
 interface SkillsProps {
   _id: string;
   name: string;
@@ -11,6 +12,7 @@ interface SkillsProps {
 
 const Skills = () => {
   const [skills, setSkills] = useState<SkillsProps[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   useEffect(() => {
     const fetchSkills = async () => {
       try {
@@ -18,6 +20,7 @@ const Skills = () => {
           "https://api.xab.net.az/api/skills"
         );
         setSkills(res.data);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching skills data:", error);
       }
@@ -34,15 +37,18 @@ const Skills = () => {
           </h1>
         </div>
         <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-5">
-          {skills.map((items) => (
-            <SkillsBox
-              id={items._id}
-              name={items.name}
-              description={items.description}
-              iconName={items.iconName}
-              forAdmin={false}
-            />
-          ))}{" "}
+          {isLoading
+            ? Array.from({ length: 5 }).map(() => <SkillsBoxSkeleton />)
+            : skills.map((skill) => (
+                <SkillsBox
+                  key={skill._id}
+                  name={skill.name}
+                  description={skill.description}
+                  iconName={skill.iconName}
+                  forAdmin={false}
+                  id={skill._id}
+                />
+              ))}{" "}
         </div>
       </div>
     </Container>

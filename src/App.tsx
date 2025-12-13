@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { ReactLenis } from "lenis/react";
 import { Suspense, lazy } from "react";
+import { Loader } from "lucide-react";
 
 // Layouts
 const MainLayout = lazy(() => import("./layouts/MainLayout"));
@@ -31,7 +32,13 @@ function App() {
     <>
       <ReactLenis root options={{ wheelMultiplier: 0.4, duration: 1.1 }} />
 
-      <Suspense fallback={<div className="text-white">Loading...</div>}>
+      <Suspense
+        fallback={
+          <div className="flex items-center justify-center h-screen w-screen">
+            <Loader className="animate-spin" size={28} />
+          </div>
+        }
+      >
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Home />} />
