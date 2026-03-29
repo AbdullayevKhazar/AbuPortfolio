@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { ReactLenis } from "lenis/react";
 import { Suspense, lazy } from "react";
 import { Loader } from "lucide-react";
+import AdminLayout from "./layouts/AdminLayouts";
 
 // Layouts
 const MainLayout = lazy(() => import("./layouts/MainLayout"));
@@ -15,17 +16,17 @@ const About = lazy(() => import("./pages/main/About"));
 const ErrorPage = lazy(() => import("./pages/main/ErrorPage"));
 
 // Admin pages
-// const AllSkills = lazy(() => import("./pages/admin/AllSkills"));
-// const AddSkill = lazy(() => import("./pages/admin/AddSkill"));
-// const EditSkill = lazy(() => import("./pages/admin/EditSkill"));
-// const AllWorks = lazy(() => import("./pages/admin/AllWorks"));
-// const AddWorks = lazy(() => import("./pages/admin/AddWorks"));
-// const EditWork = lazy(() => import("./pages/admin/EditWork"));
-// const AddExperience = lazy(() => import("./pages/admin/AddExperience"));
-// const Experiences = lazy(() => import("./pages/admin/Experiences"));
-// const EditExperience = lazy(() => import("./pages/admin/EditExperience"));
-// const AddEducation = lazy(() => import("./pages/admin/AddEducation"));
-// const Education = lazy(() => import("./pages/admin/Education"));
+const AllSkills = lazy(() => import("./pages/admin/AllSkills"));
+const AddSkill = lazy(() => import("./pages/admin/AddSkill"));
+const EditSkill = lazy(() => import("./pages/admin/EditSkill"));
+const AllWorks = lazy(() => import("./pages/admin/AllWorks"));
+const AddWorks = lazy(() => import("./pages/admin/AddWorks"));
+const EditWork = lazy(() => import("./pages/admin/EditWork"));
+const AddExperience = lazy(() => import("./pages/admin/AddExperience"));
+const Experiences = lazy(() => import("./pages/admin/Experiences"));
+const EditExperience = lazy(() => import("./pages/admin/EditExperience"));
+const AddEducation = lazy(() => import("./pages/admin/AddEducation"));
+const Education = lazy(() => import("./pages/admin/Education"));
 
 function App() {
   return (
@@ -48,7 +49,7 @@ function App() {
             <Route path="skills" element={<About />} />
           </Route>
 
-          {/* <Route path="admin/*" element={<AdminLayout />}>
+          <Route path="admin/*" element={<AdminLayout />}>
             <Route index element={<AllSkills />} />
             <Route path="add-skill" element={<AddSkill />} />
             <Route path="edit-skill/:id" element={<EditSkill />} />
@@ -60,7 +61,7 @@ function App() {
             <Route path="add-educations" element={<AddEducation />} />
             <Route path="edit-work/:id" element={<EditWork />} />
             <Route path="edit-experience/:id" element={<EditExperience />} />
-          </Route> */}
+          </Route>
 
           <Route path="/*" element={<ErrorPage />} />
         </Routes>
