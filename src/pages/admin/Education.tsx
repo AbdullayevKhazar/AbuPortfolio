@@ -22,7 +22,7 @@ const Education = () => {
   const fetchEducations = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("https://api.xab.net.az/api/educations");
+      const res = await axios.get("https://api.xab.net.az/api/education");
       setEducations(res.data.data || res.data || []);
     } catch (err) {
       setError("Failed to load educations." + err);
@@ -31,7 +31,7 @@ const Education = () => {
     }
   };
   const handleDelete = async (id: string) => {
-    await axios.delete(`https://api.xab.net.az/api/educations/${id}`);
+    await axios.delete(`https://api.xab.net.az/api/education/${id}`);
     fetchEducations();
   };
 

@@ -34,7 +34,7 @@ const AddWorks = () => {
 
   const handleSubmit = async (
     values: typeof initialValues,
-    { resetForm }: { resetForm: () => void }
+    { resetForm }: { resetForm: () => void },
   ) => {
     if (!file) return;
     setLoading(true);
@@ -42,11 +42,11 @@ const AddWorks = () => {
       const formData = new FormData();
       formData.append("mainImage", file);
       Object.entries(values).forEach(([key, value]) =>
-        formData.append(key, value.toString())
+        formData.append(key, value.toString()),
       );
       await axios.post(
         "https://api.xab.net.az/api/my-works/add-work",
-        formData
+        formData,
       );
       resetForm();
       setPreview(null);

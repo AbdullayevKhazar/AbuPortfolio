@@ -21,7 +21,7 @@ const Experiences = () => {
 
   const fetchExperiences = async () => {
     try {
-      const res = await axios.get("https://api.xab.net.az/api/experiences");
+      const res = await axios.get("https://api.xab.net.az/api/experience");
       setData(res.data);
     } catch (err) {
       setError("Failed to load experiences" + err);
@@ -30,7 +30,7 @@ const Experiences = () => {
     }
   };
   const handleDelete = async (id: string) => {
-    await axios.delete(`https://api.xab.net.az/api/experiences/${id}`);
+    await axios.delete(`https://api.xab.net.az/api/experience/${id}`);
     fetchExperiences();
   };
   useEffect(() => {
@@ -69,8 +69,8 @@ const Experiences = () => {
                 {exp.isCurrentJob
                   ? "Present"
                   : exp.endDate
-                  ? new Date(exp.endDate).toLocaleDateString()
-                  : ""}
+                    ? new Date(exp.endDate).toLocaleDateString()
+                    : ""}
               </span>
             </div>
 
