@@ -27,7 +27,7 @@ const AddEducation = () => {
           isCurrent: Yup.boolean(),
         })}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          await axios.post("https://api.xab.net.az/api/educations", values);
+          await axios.post("https://api.xab.net.az/api/education", values);
           setSubmitting(false);
           resetForm();
         }}

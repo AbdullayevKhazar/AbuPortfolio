@@ -19,7 +19,7 @@ const DynamicIcon = ({ iconName, size = 48, color }: DynamicIconProps) => {
   const SimpleIcon = simpleIconMap[`Si${iconName}`];
   if (SimpleIcon) {
     const brandKey = Object.keys(simpleIconsData).find(
-      (key) => key.toLowerCase() === iconName.toLowerCase()
+      (key) => key.toLowerCase() === iconName.toLowerCase(),
     );
 
     const brand = brandKey
