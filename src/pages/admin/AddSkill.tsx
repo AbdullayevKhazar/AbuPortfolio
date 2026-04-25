@@ -2,6 +2,7 @@ import axios from "axios";
 import { Formik, Field, Form, ErrorMessage } from "formik";
 import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
+import { API_ENDPOINTS } from "../../lib/api";
 
 const validateSchema = Yup.object({
   name: Yup.string().required("Name is required"),
@@ -25,10 +26,7 @@ const AddSkill = () => {
               formData.append("image", values.image);
             }
 
-            await axios.post(
-              "https://api.xab.net.az/api/skills/add-skill",
-              formData
-            );
+            await axios.post(API_ENDPOINTS.skills.add, formData);
             navigate(-1);
           } finally {
             setSubmitting(false);

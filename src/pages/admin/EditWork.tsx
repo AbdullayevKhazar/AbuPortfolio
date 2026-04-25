@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { Loader2, UploadCloud, X } from "lucide-react";
 import Dropzone from "react-dropzone";
 import axios from "axios";
+import { API_ENDPOINTS } from "../../lib/api";
 
 interface InitialValue {
   projectName: string;
@@ -44,9 +45,7 @@ const EditWork = () => {
   useEffect(() => {
     const fetchWork = async () => {
       try {
-        const res = await axios.get(
-          `https://api.xab.net.az/api/my-works/${id}`
-        );
+        const res = await axios.get(API_ENDPOINTS.works.getById(id!));
         const work = res.data;
 
         setInitialValues({
@@ -80,7 +79,7 @@ const EditWork = () => {
         formData.append(key, String(value))
       );
 
-      await axios.put(`https://api.xab.net.az/api/my-works/${id}`, formData);
+      await axios.put(API_ENDPOINTS.works.update(id!), formData);
 
       alert("Project updated successfully!");
     } catch (error) {

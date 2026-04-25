@@ -6,6 +6,7 @@ import {
   isAdminAuthenticated,
   saveAdminAuth,
 } from "../../utils/adminAuth";
+import { API_ENDPOINTS } from "../../lib/api";
 
 interface LoginResponse {
   accessToken: string;
@@ -35,13 +36,10 @@ const AdminLogin = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await axios.post<LoginResponse>(
-        "https://api.xab.net.az/api/auth/login",
-        {
-          email,
-          password,
-        },
-      );
+      const response = await axios.post<LoginResponse>(API_ENDPOINTS.auth.login, {
+        email,
+        password,
+      });
 
       if (response.data.user.role !== "admin") {
         clearAdminAuth();

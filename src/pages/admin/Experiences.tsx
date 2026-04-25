@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { Briefcase, Calendar, CheckCircle, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { API_ENDPOINTS } from "../../lib/api";
 
 interface Experience {
   _id: string;
@@ -21,7 +22,7 @@ const Experiences = () => {
 
   const fetchExperiences = async () => {
     try {
-      const res = await axios.get("https://api.xab.net.az/api/experience");
+      const res = await axios.get(API_ENDPOINTS.experience.list);
       setData(res.data);
     } catch (err) {
       setError("Failed to load experiences" + err);
@@ -30,7 +31,7 @@ const Experiences = () => {
     }
   };
   const handleDelete = async (id: string) => {
-    await axios.delete(`https://api.xab.net.az/api/experience/${id}`);
+    await axios.delete(API_ENDPOINTS.experience.delete(id));
     fetchExperiences();
   };
   useEffect(() => {

@@ -1,6 +1,7 @@
 import axios from "axios";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
+import { API_ENDPOINTS } from "../../lib/api";
 
 const AddEducation = () => {
   return (
@@ -27,7 +28,7 @@ const AddEducation = () => {
           isCurrent: Yup.boolean(),
         })}
         onSubmit={async (values, { setSubmitting, resetForm }) => {
-          await axios.post("https://api.xab.net.az/api/education", values);
+          await axios.post(API_ENDPOINTS.education.create, values);
           setSubmitting(false);
           resetForm();
         }}

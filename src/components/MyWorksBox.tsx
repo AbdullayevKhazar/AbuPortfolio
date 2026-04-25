@@ -4,6 +4,7 @@ import { FiExternalLink, FiGithub, FiEdit2, FiTrash2 } from "react-icons/fi";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import type React from "react";
+import { API_ENDPOINTS } from "../lib/api";
 
 const MyWorksBox = ({
   id,
@@ -34,7 +35,7 @@ const MyWorksBox = ({
       return;
 
     try {
-      await axios.delete(`https://api.xab.net.az/api/my-works/${id}`);
+      await axios.delete(API_ENDPOINTS.works.delete(id));
       if (onDelete) onDelete(id);
     } catch (err) {
       console.error(err);

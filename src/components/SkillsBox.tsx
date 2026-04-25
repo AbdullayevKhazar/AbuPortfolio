@@ -1,5 +1,6 @@
 import { X } from "lucide-react";
 import axios from "axios";
+import { API_ENDPOINTS } from "../lib/api";
 
 const SkillsBox = ({
   name,
@@ -15,7 +16,7 @@ const SkillsBox = ({
   id?: string;
 }) => {
   const deleteSkill = async () => {
-    await axios.delete(`https://api.xab.net.az/api/skills/delete/${id}`);
+    await axios.delete(API_ENDPOINTS.skills.delete(id!));
   };
   return (
     <div

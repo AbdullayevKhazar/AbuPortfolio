@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Skeleton } from "./ui/skeleton";
+import { API_BASE_URL } from "../lib/api";
 
 interface Experience {
   _id: string;
@@ -31,7 +32,7 @@ const TabsBox = ({ tab }: { tab: string }) => {
   const fetchExperiences = async () => {
     try {
       setLoading(true);
-      const res = await axios.get(`https://api.xab.net.az/api/${tab}`);
+      const res = await axios.get(`${API_BASE_URL}/${tab}`);
       setData(res.data);
     } catch (err) {
       setError("Failed to load data." + err);

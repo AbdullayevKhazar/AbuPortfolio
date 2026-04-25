@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Container from "../../components/Container";
 import axios from "axios";
 import MyWorksBox from "../../components/MyWorksBox";
+import { API_ENDPOINTS } from "../../lib/api";
 
 interface Works {
   _id: string;
@@ -18,7 +19,7 @@ const MyProject = () => {
 
   useEffect(() => {
     const fetchWorks = async () => {
-      const res = await axios.get("https://api.xab.net.az/api/my-works/");
+      const res = await axios.get(API_ENDPOINTS.works.list);
       setWorks(res.data);
     };
     fetchWorks();

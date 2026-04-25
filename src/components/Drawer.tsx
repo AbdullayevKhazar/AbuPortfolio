@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { API_ENDPOINTS } from "../lib/api";
 
 const Drawer = ({
   isOpen,
@@ -25,7 +26,7 @@ const Drawer = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    await axios.post("https://api.xab.net.az/api/contact", formData);
+    await axios.post(API_ENDPOINTS.contact.create, formData);
     setFormData({ name: "", email: "", message: "" });
     setLoading(false);
 

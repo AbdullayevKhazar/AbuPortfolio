@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
+import { API_ENDPOINTS } from "../../lib/api";
 
 interface Work {
   _id: string;
@@ -23,9 +24,7 @@ const ProjectDetails = () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await axios.get(
-          `https://api.xab.net.az/api/my-works/${id}`
-        );
+        const res = await axios.get(API_ENDPOINTS.works.getById(id!));
         setWork(res.data);
       } catch (err) {
         console.error("Failed to fetch project:", err);

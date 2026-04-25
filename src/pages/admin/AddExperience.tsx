@@ -2,6 +2,7 @@ import axios from "axios";
 import { Field, Form, Formik, FieldArray } from "formik";
 import { Plus } from "lucide-react";
 import * as Yup from "yup";
+import { API_ENDPOINTS } from "../../lib/api";
 
 const validationSchema = Yup.object({
   companyName: Yup.string().required("Company Name is required"),
@@ -42,7 +43,7 @@ const AddExperience = () => {
       }}
       validationSchema={validationSchema}
       onSubmit={(values) => {
-        axios.post("https://api.xab.net.az/api/experience", values);
+        axios.post(API_ENDPOINTS.experience.create, values);
       }}
     >
       {({ values, errors, touched }) => (

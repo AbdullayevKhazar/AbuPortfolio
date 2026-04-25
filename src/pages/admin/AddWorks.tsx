@@ -4,6 +4,7 @@ import * as Yup from "yup";
 import { Loader2, UploadCloud, X } from "lucide-react";
 import Dropzone from "react-dropzone";
 import axios from "axios";
+import { API_ENDPOINTS } from "../../lib/api";
 
 const validationSchema = Yup.object({
   projectName: Yup.string().required("Project name is required"),
@@ -44,10 +45,7 @@ const AddWorks = () => {
       Object.entries(values).forEach(([key, value]) =>
         formData.append(key, value.toString()),
       );
-      await axios.post(
-        "https://api.xab.net.az/api/my-works/add-work",
-        formData,
-      );
+      await axios.post(API_ENDPOINTS.works.add, formData);
       resetForm();
       setPreview(null);
       setFile(null);

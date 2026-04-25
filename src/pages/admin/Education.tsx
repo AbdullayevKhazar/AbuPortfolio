@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { X } from "lucide-react";
+import { API_ENDPOINTS } from "../../lib/api";
 
 interface EducationItem {
   _id: string;
@@ -22,7 +23,7 @@ const Education = () => {
   const fetchEducations = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("https://api.xab.net.az/api/education");
+      const res = await axios.get(API_ENDPOINTS.education.list);
       setEducations(res.data.data || res.data || []);
     } catch (err) {
       setError("Failed to load educations." + err);
@@ -31,7 +32,7 @@ const Education = () => {
     }
   };
   const handleDelete = async (id: string) => {
-    await axios.delete(`https://api.xab.net.az/api/education/${id}`);
+    await axios.delete(API_ENDPOINTS.education.delete(id));
     fetchEducations();
   };
 

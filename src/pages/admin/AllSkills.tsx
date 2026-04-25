@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SkillsBox from "../../components/SkillsBox";
 import axios from "axios";
+import { API_ENDPOINTS } from "../../lib/api";
 
 interface Skill {
   id: string | number;
@@ -22,7 +23,7 @@ const AllSkills = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const res = await axios.get("https://api.xab.net.az/api/skills");
+        const res = await axios.get(API_ENDPOINTS.skills.list);
         setSkills(res.data);
       } catch (err) {
         console.error("Failed to fetch skills:", err);

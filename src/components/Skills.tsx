@@ -3,6 +3,7 @@ import SkillsBox from "./SkillsBox";
 import axios from "axios";
 import Container from "./Container";
 import SkillsBoxSkeleton from "./SkillBoxSkeleton";
+import { API_ENDPOINTS } from "../lib/api";
 interface SkillsProps {
   _id: string;
   name: string;
@@ -16,9 +17,7 @@ const Skills = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const res = await axios.get<SkillsProps[]>(
-          "https://api.xab.net.az/api/skills",
-        );
+        const res = await axios.get<SkillsProps[]>(API_ENDPOINTS.skills.list);
         setSkills(res.data);
         setIsLoading(false);
       } catch (error) {

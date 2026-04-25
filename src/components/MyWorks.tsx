@@ -3,6 +3,7 @@ import Container from "./Container";
 import MyWorksBox from "./MyWorksBox";
 import axios from "axios";
 import MyWorksBoxSkeleton from "./MyWorksBoxSkeleton";
+import { API_ENDPOINTS } from "../lib/api";
 
 interface Works {
   _id: string;
@@ -19,7 +20,7 @@ const PortfolioPage = () => {
   useEffect(() => {
     const fetchWorks = async () => {
       try {
-        const res = await axios.get("https://api.xab.net.az/api/my-works/");
+        const res = await axios.get(API_ENDPOINTS.works.list);
         setWorks(res.data);
         setIsLoading(false);
       } catch {

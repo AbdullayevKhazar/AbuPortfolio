@@ -4,6 +4,7 @@ import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { Loader2 } from "lucide-react";
+import { API_ENDPOINTS } from "../../lib/api";
 
 interface Skill {
   _id: string;
@@ -35,7 +36,7 @@ const EditSkill = () => {
   useEffect(() => {
     const fetchSkill = async () => {
       try {
-        const res = await axios.get(`https://api.xab.net.az/api/skills/${id}`);
+        const res = await axios.get(API_ENDPOINTS.skills.getById(id!));
         setSkill(res.data);
       } catch (err) {
         console.error("Failed to fetch skill:", err);
@@ -58,7 +59,7 @@ const EditSkill = () => {
         formData.append("image", values.image);
       }
 
-      await axios.put(`https://api.xab.net.az/api/skills/update/${id}`, formData);
+      await axios.put(API_ENDPOINTS.skills.update(id!), formData);
       alert("Skill updated successfully!");
       navigate("/admin"); // or wherever your skills list is
     } catch (err) {
