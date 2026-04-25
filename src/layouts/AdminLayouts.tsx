@@ -1,5 +1,5 @@
 // src/layouts/AdminLayout.tsx
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Sidebar,
   SidebarContent,
@@ -27,11 +27,13 @@ import {
   Moon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { clearAdminAuth } from "../utils/adminAuth";
 
 export default function AdminLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isDark, setIsDark] = useState(() =>
-    document.documentElement.classList.contains("dark")
+    document.documentElement.classList.contains("dark"),
   );
 
   // Sync dark mode class
@@ -64,6 +66,11 @@ export default function AdminLayout() {
       path: "/admin/experience",
     },
   ];
+
+  const handleLogout = () => {
+    clearAdminAuth();
+    navigate("/admin/login", { replace: true });
+  };
 
   return (
     <>
@@ -108,7 +115,7 @@ export default function AdminLayout() {
 
           {/* Footer with dark mode toggle */}
           <SidebarFooter>
-            <Button variant="ghost" className="gap-2">
+            <Button variant="ghost" className="gap-2" onClick={handleLogout}>
               <LogOut className="w-5 h-5" /> Logout
             </Button>
 

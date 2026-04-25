@@ -3,6 +3,7 @@ import { ReactLenis } from "lenis/react";
 import { Suspense, lazy } from "react";
 import { Loader } from "lucide-react";
 import AdminLayout from "./layouts/AdminLayouts";
+import RequireAdmin from "./components/RequireAdmin";
 
 // Layouts
 const MainLayout = lazy(() => import("./layouts/MainLayout"));
@@ -27,6 +28,7 @@ const Experiences = lazy(() => import("./pages/admin/Experiences"));
 const EditExperience = lazy(() => import("./pages/admin/EditExperience"));
 const AddEducation = lazy(() => import("./pages/admin/AddEducation"));
 const Education = lazy(() => import("./pages/admin/Education"));
+const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
 
 function App() {
   return (
@@ -49,7 +51,16 @@ function App() {
             <Route path="skills" element={<About />} />
           </Route>
 
-          <Route path="admin/*" element={<AdminLayout />}>
+          <Route path="admin/login" element={<AdminLogin />} />
+
+          <Route
+            path="admin/*"
+            element={
+              <RequireAdmin>
+                <AdminLayout />
+              </RequireAdmin>
+            }
+          >
             <Route index element={<AllSkills />} />
             <Route path="add-skill" element={<AddSkill />} />
             <Route path="edit-skill/:id" element={<EditSkill />} />
@@ -63,6 +74,7 @@ function App() {
             <Route path="edit-experience/:id" element={<EditExperience />} />
           </Route>
 
+          <Route path="/404" element={<ErrorPage />} />
           <Route path="/*" element={<ErrorPage />} />
         </Routes>
       </Suspense>
