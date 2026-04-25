@@ -9,13 +9,19 @@ interface Skill {
   _id: string;
   name: string;
   description: string;
-  iconName: string;
+  imageUrl: string;
+  publicId: string;
+}
+
+interface SkillFormValues {
+  name: string;
+  description: string;
+  image: File | null;
 }
 
 const validationSchema = Yup.object({
   name: Yup.string().required("Skill name is required"),
   description: Yup.string().required("Description is required"),
-  iconName: Yup.string().required("Icon name is required"),
 });
 
 const EditSkill = () => {
@@ -41,10 +47,18 @@ const EditSkill = () => {
     fetchSkill();
   }, [id]);
 
-  const handleSubmit = async (values: Skill) => {
+  const handleSubmit = async (values: SkillFormValues) => {
     try {
       setSaving(true);
-      await axios.put(`https://api.xab.net.az/api/skills/update/${id}`, values);
+
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("description", values.description);
+      if (values.image) {
+        formData.append("image", values.image);
+      }
+
+      await axios.put(`https://api.xab.net.az/api/skills/update/${id}`, formData);
       alert("Skill updated successfully!");
       navigate("/admin"); // or wherever your skills list is
     } catch (err) {
@@ -79,12 +93,16 @@ const EditSkill = () => {
       <h2 className="text-3xl font-bold mb-6 text-center">Edit Skill</h2>
 
       <Formik
-        initialValues={skill}
+        initialValues={{
+          name: skill.name,
+          description: skill.description,
+          image: null,
+        }}
         validationSchema={validationSchema}
         onSubmit={handleSubmit}
         enableReinitialize
       >
-        {() => (
+        {({ setFieldValue }) => (
           <Form className="space-y-5">
             {/* Skill Name */}
             <div>
@@ -118,18 +136,23 @@ const EditSkill = () => {
               />
             </div>
 
-            {/* Icon Name */}
+            {/* Skill Image */}
             <div>
-              <label className="block font-medium mb-1">Icon Name</label>
-              <Field
-                name="iconName"
-                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-sky-400 outline-none"
-                placeholder="Enter icon name (e.g., FaReact)"
+              <label className="block font-medium mb-1">Skill Image</label>
+              <img
+                src={skill.imageUrl}
+                alt={skill.name}
+                className="w-16 h-16 object-cover rounded-md mb-2 border"
               />
-              <ErrorMessage
-                name="iconName"
-                component="div"
-                className="text-red-500 text-sm mt-1"
+              <input
+                type="file"
+                name="image"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0] || null;
+                  setFieldValue("image", file);
+                }}
+                className="w-full border rounded-lg p-2 focus:ring-2 focus:ring-sky-400 outline-none"
               />
             </div>
 

@@ -1,17 +1,16 @@
 import { X } from "lucide-react";
-import DynamicIcon from "./DynamicIcons";
 import axios from "axios";
 
 const SkillsBox = ({
   name,
   description,
-  iconName,
+  imageUrl,
   forAdmin,
   id,
 }: {
   name: string;
   description: string;
-  iconName: string;
+  imageUrl: string;
   forAdmin: boolean;
   id?: string;
 }) => {
@@ -30,7 +29,12 @@ const SkillsBox = ({
         className="flex items-center justify-center w-12 h-12 rounded-md
                    text-gray-800 dark:text-white z-10"
       >
-        <DynamicIcon iconName={iconName} size={36} />
+        <img
+          src={imageUrl}
+          alt={name}
+          className="w-12 h-12 object-contain rounded-md"
+          loading="lazy"
+        />
       </div>
       {/* Text Content */}
       <div className="flex flex-col z-10">

@@ -6,7 +6,7 @@ import * as Yup from "yup";
 const validateSchema = Yup.object({
   name: Yup.string().required("Name is required"),
   description: Yup.string().required("Description is required"),
-  iconName: Yup.string().required("Icon is required"),
+  image: Yup.mixed<File>().required("Image is required"),
 });
 
 const AddSkill = () => {
@@ -14,19 +14,28 @@ const AddSkill = () => {
   return (
     <div className="w-full p-4">
       <Formik
-        initialValues={{ name: "", description: "", iconName: "" }}
+        initialValues={{ name: "", description: "", image: null as File | null }}
         validationSchema={validateSchema}
         onSubmit={async (values, { setSubmitting }) => {
-          await axios.post("https://api.xab.net.az/api/skills/add-skill", {
-            name: values.name,
-            description: values.description,
-            iconName: values.iconName,
-          });
-          setSubmitting(false);
-          navigate(-1);
+          try {
+            const formData = new FormData();
+            formData.append("name", values.name);
+            formData.append("description", values.description);
+            if (values.image) {
+              formData.append("image", values.image);
+            }
+
+            await axios.post(
+              "https://api.xab.net.az/api/skills/add-skill",
+              formData
+            );
+            navigate(-1);
+          } finally {
+            setSubmitting(false);
+          }
         }}
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, setFieldValue }) => (
           <Form
             className="flex flex-col gap-6 p-8 rounded-xl shadow-lg w-full max-w-full
                        backdrop-blur-lg transition-all duration-300
@@ -91,17 +100,22 @@ const AddSkill = () => {
               />
             </div>
 
-            {/* --- Icon Name Field --- */}
+            {/* --- Image Field --- */}
             <div className="flex flex-col gap-1.5">
               <label
-                htmlFor="iconName"
+                htmlFor="image"
                 className="text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Icon Name
+                Skill Image
               </label>
-              <Field
-                name="iconName"
-                type="text" // Corrected from "iconName"
+              <input
+                name="image"
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  const file = event.currentTarget.files?.[0] || null;
+                  setFieldValue("image", file);
+                }}
                 className="w-full px-4 py-2 rounded-md border transition-all duration-300
                            text-gray-900 dark:text-white
                            bg-white/50 dark:bg-white/5
@@ -111,7 +125,7 @@ const AddSkill = () => {
                            focus:ring-2 focus:outline-none"
               />
               <ErrorMessage
-                name="iconName"
+                name="image"
                 component="div"
                 className="text-red-500 dark:text-red-400 text-xs"
               />

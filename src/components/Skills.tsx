@@ -7,7 +7,7 @@ interface SkillsProps {
   _id: string;
   name: string;
   description: string;
-  iconName: string;
+  imageUrl: string;
 }
 
 const Skills = () => {
@@ -44,7 +44,7 @@ const Skills = () => {
                   key={skill._id}
                   name={skill.name}
                   description={skill.description}
-                  iconName={skill.iconName}
+                  imageUrl={skill.imageUrl}
                   forAdmin={false}
                   id={skill._id}
                 />

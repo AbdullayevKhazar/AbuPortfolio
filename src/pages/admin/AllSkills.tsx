@@ -7,7 +7,7 @@ interface Skill {
   id: string | number;
   name: string;
   description: string;
-  iconName: string;
+  imageUrl: string;
   _id: string;
 }
 
@@ -71,7 +71,7 @@ const AllSkills = () => {
               <SkillsBox
                 name={skill.name}
                 description={skill.description}
-                iconName={skill.iconName}
+                imageUrl={skill.imageUrl}
                 forAdmin={true}
                 id={skill._id}
               />
