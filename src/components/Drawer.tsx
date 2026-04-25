@@ -1,5 +1,5 @@
 import axios from "axios";
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
 const Drawer = ({
@@ -17,7 +17,7 @@ const Drawer = ({
   const [loading, setLoading] = useState(false);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -86,7 +86,7 @@ const Drawer = ({
               className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 cursor-pointer transition w-[25  0px]"
             >
               {loading ? (
-                <Loader className="animate-spin mx-auto" />
+                <Loader2 className="animate-spin mx-auto" />
               ) : (
                 "Send Message"
               )}

@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { ReactLenis } from "lenis/react";
 import { Suspense, lazy } from "react";
-import { Loader } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import AdminLayout from "./layouts/AdminLayouts";
 import RequireAdmin from "./components/RequireAdmin";
 
@@ -38,7 +38,7 @@ function App() {
       <Suspense
         fallback={
           <div className="flex items-center justify-center h-screen w-screen">
-            <Loader className="animate-spin" size={28} />
+            <Loader2 className="animate-spin" size={28} />
           </div>
         }
       >
