@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { Loader2 } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
 import ImageUploadField from "../../components/ImageUploadField";
 import {
@@ -10,16 +10,23 @@ import {
   getApiErrorMessage,
 } from "../../lib/api";
 
+interface EducationValues {
+  schoolName: string;
+  degree: string;
+  fieldOfStudy: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+  schoolImage?: string;
+  isCurrent: boolean;
+}
+
 const validationSchema = Yup.object({
   schoolName: Yup.string().trim().required("School name is required"),
   degree: Yup.string().trim(),
   fieldOfStudy: Yup.string().trim().required("Field of study is required"),
-  startDate: Yup.date().required("Start date is required").typeError("Enter a valid date"),
-  endDate: Yup.date().nullable().when("isCurrent", {
-    is: false,
-    then: (schema) => schema.required("End date is required").typeError("Enter a valid date"),
-    otherwise: (schema) => schema.notRequired(),
-  }),
+  startDate: Yup.string().required("Start date is required"),
+  endDate: Yup.string().nullable(),
   description: Yup.string().trim(),
   isCurrent: Yup.boolean(),
 });
@@ -27,41 +34,73 @@ const validationSchema = Yup.object({
 const fieldClass =
   "mt-1 w-full rounded-lg border border-input bg-background px-3 py-2.5 outline-none focus:ring-2 focus:ring-ring";
 
-const AddEducation = () => {
+const toDateInput = (value?: string) =>
+  value ? new Date(value).toISOString().slice(0, 10) : "";
+
+const EditEducation = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
+  const [initialValues, setInitialValues] =
+    useState<EducationValues | null>(null);
+  const [originalImage, setOriginalImage] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState("");
+  const [pageError, setPageError] = useState("");
+
+  useEffect(() => {
+    apiClient
+      .get<EducationValues>(API_ENDPOINTS.education.getById(id!))
+      .then(({ data }) => {
+        const currentImage = data.schoolImage || "";
+        setOriginalImage(currentImage);
+        setPreview(currentImage);
+        setInitialValues({
+          ...data,
+          degree: data.degree || "",
+          description: data.description || "",
+          startDate: toDateInput(data.startDate),
+          endDate: toDateInput(data.endDate),
+        });
+      })
+      .catch((error) =>
+        setPageError(
+          getApiErrorMessage(error, "Failed to load education record."),
+        ),
+      );
+  }, [id]);
 
   useEffect(
     () => () => {
-      if (preview) URL.revokeObjectURL(preview);
+      if (image && preview) URL.revokeObjectURL(preview);
     },
-    [preview],
+    [image, preview],
   );
 
   const updateImage = (file: File | null) => {
-    if (preview) URL.revokeObjectURL(preview);
+    if (image && preview) URL.revokeObjectURL(preview);
     setImage(file);
-    setPreview(file ? URL.createObjectURL(file) : "");
+    setPreview(file ? URL.createObjectURL(file) : originalImage);
   };
+
+  if (!initialValues) {
+    return pageError ? (
+      <p className="py-10 text-center text-red-500">{pageError}</p>
+    ) : (
+      <div className="flex min-h-64 items-center justify-center gap-2">
+        <Loader2 className="size-5 animate-spin" /> Loading education...
+      </div>
+    );
+  }
 
   return (
     <section className="mx-auto max-w-3xl space-y-6">
       <div>
         <p className="text-sm font-medium text-blue-600">Background</p>
-        <h1 className="text-3xl font-bold">Add education</h1>
+        <h1 className="text-3xl font-bold">Edit education</h1>
       </div>
 
       <Formik
-        initialValues={{
-          schoolName: "",
-          degree: "",
-          fieldOfStudy: "",
-          startDate: "",
-          endDate: "",
-          description: "",
-          isCurrent: false,
-        }}
+        initialValues={initialValues}
         validationSchema={validationSchema}
         onSubmit={async (values, { setSubmitting, setStatus }) => {
           setStatus("");
@@ -76,11 +115,11 @@ const AddEducation = () => {
             formData.append("isCurrent", String(values.isCurrent));
             if (image) formData.append("schoolImage", image);
 
-            await apiClient.post(API_ENDPOINTS.education.create, formData);
+            await apiClient.put(API_ENDPOINTS.education.update(id!), formData);
             navigate("/admin/educations");
           } catch (error) {
             setStatus(
-              getApiErrorMessage(error, "Failed to create education record."),
+              getApiErrorMessage(error, "Failed to update education record."),
             );
           } finally {
             setSubmitting(false);
@@ -91,9 +130,10 @@ const AddEducation = () => {
           <Form className="space-y-6 rounded-2xl border bg-card p-5 shadow-sm md:p-8">
             <ImageUploadField
               label="School logo"
-              description="Optional. The image will be stored in Cloudinary."
+              description="Replace the current image to upload a new Cloudinary asset."
               preview={preview}
               onChange={updateImage}
+              showRemove={Boolean(image)}
             />
 
             <div className="grid gap-5 md:grid-cols-2">
@@ -118,13 +158,11 @@ const AddEducation = () => {
               <label className="text-sm font-medium">
                 Start date
                 <Field name="startDate" type="date" className={fieldClass} />
-                <ErrorMessage name="startDate" component="p" className="mt-1 text-sm text-red-500" />
               </label>
               {!values.isCurrent && (
                 <label className="text-sm font-medium">
                   End date
                   <Field name="endDate" type="date" className={fieldClass} />
-                  <ErrorMessage name="endDate" component="p" className="mt-1 text-sm text-red-500" />
                 </label>
               )}
             </div>
@@ -154,7 +192,7 @@ const AddEducation = () => {
               </button>
               <button type="submit" disabled={isSubmitting} className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white hover:bg-blue-700 disabled:opacity-60">
                 {isSubmitting && <Loader2 className="size-4 animate-spin" />}
-                Add education
+                Save changes
               </button>
             </div>
           </Form>
@@ -164,4 +202,4 @@ const AddEducation = () => {
   );
 };
 
-export default AddEducation;
+export default EditEducation;

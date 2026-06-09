@@ -1,134 +1,163 @@
-// src/components/MyWorksBox/MyWorksBox.jsx
-
-import { FiExternalLink, FiGithub, FiEdit2, FiTrash2 } from "react-icons/fi";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { ExternalLink, Github, Pencil, Trash2 } from "lucide-react";
 import type React from "react";
-import { API_ENDPOINTS } from "../lib/api";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { apiClient, API_ENDPOINTS } from "../lib/api";
+import { useTranslation } from "react-i18next";
+
+interface MyWorksBoxProps {
+  id: string;
+  title: string;
+  category?: string;
+  description: string;
+  mainImage: string;
+  technologies: string[];
+  liveUrl?: string;
+  githubLink?: string;
+  isAdmin?: boolean;
+  isFeatured?: boolean;
+  onDelete?: (id: string) => void;
+}
 
 const MyWorksBox = ({
   id,
   title,
+  category,
   description,
   mainImage,
   technologies,
   liveUrl,
   githubLink,
   isAdmin = false,
+  isFeatured = false,
   onDelete,
-}: {
-  id: string;
-  title: string;
-  description: string;
-  mainImage: string;
-  technologies: string[];
-  liveUrl?: string;
-  githubLink: string;
-  isAdmin: boolean;
-  onDelete: (id: string) => void;
-}) => {
+}: MyWorksBoxProps) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
+  const [actionError, setActionError] = useState("");
 
-  const handleDelete = async (e: { stopPropagation: () => void }) => {
-    e.stopPropagation();
-    if (!window.confirm("Are you sure you want to delete this project?"))
+  const handleDelete = async (event: React.MouseEvent) => {
+    event.stopPropagation();
+    if (!window.confirm(t("projects.deleteConfirm")))
       return;
 
     try {
-      await axios.delete(API_ENDPOINTS.works.delete(id));
-      if (onDelete) onDelete(id);
-    } catch (err) {
-      console.error(err);
-      alert("Failed to delete project.");
+      setActionError("");
+      await apiClient.delete(API_ENDPOINTS.works.delete(id));
+      onDelete?.(id);
+    } catch {
+      setActionError(t("projects.deleteError"));
     }
   };
 
-  // ✅ If admin, don’t wrap with Link
-  const Wrapper: React.ElementType = isAdmin ? "div" : Link;
-  const wrapperProps: Record<string, unknown> = isAdmin
-    ? {}
-    : { to: `../project/${id}` };
+  const Wrapper: React.ElementType = isAdmin ? "article" : Link;
+  const wrapperProps = isAdmin ? {} : { to: `/project/${id}` };
 
   return (
     <Wrapper
       {...wrapperProps}
-      className={`group flex flex-col overflow-hidden rounded-xl transition-all duration-300 border border-gray-200 
-      bg-white/90 dark:bg-white/5 hover:bg-white/90 shadow-md dark:border-white/10 dark:backdrop-blur-lg dark:hover:bg-white/10`}
+      className="group flex h-full z-10 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-xl dark:border-white/10 dark:bg-card"
     >
-      <div className="aspect-video overflow-hidden relative">
+      <div className="relative aspect-[16/10] overflow-hidden bg-slate-100 dark:bg-white/5">
         <img
           src={mainImage}
-          alt={`Screenshot of ${title}`}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          alt={t("projects.coverAlt", { title })}
+          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
         />
+        {(category || isFeatured) && (
+          <div className="absolute left-4 top-4 flex gap-2">
+            {category && (
+              <span className="rounded-full bg-black/70 px-3 py-1 text-xs font-medium text-white backdrop-blur">
+                {category}
+              </span>
+            )}
+            {isFeatured && (
+              <span className="rounded-full bg-amber-400 px-3 py-1 text-xs font-semibold text-amber-950">
+                {t("projects.featured")}
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
-      <div className="flex flex-1 flex-col py-6 px-3">
-        <h3 className="text-2xl font-semibold dark:text-[#eee]">{title}</h3>
-        <p className="mt-2 flex-1 text-gray-600 dark:text-[#eee]/60">
-          {description.length > 110
-            ? `${description.slice(0, 110)}...`
+      <div className="flex flex-1 flex-col p-5 sm:p-6">
+        <h3 className="text-xl font-semibold tracking-tight text-slate-950 dark:text-white">
+          {title}
+        </h3>
+        <p className="mt-2 flex-1 text-sm leading-6 text-slate-600 dark:text-slate-400">
+          {description.length > 150
+            ? `${description.slice(0, 150)}...`
             : description}
         </p>
 
-        <div className="mt-4 flex flex-wrap gap-2">
-          {technologies.map((tech, index) => (
+        <div className="mt-5 flex flex-wrap gap-2">
+          {technologies.slice(0, 5).map((tech) => (
             <span
-              key={index}
-              className="rounded-full text-black border bg-[#eee]/40 px-3 py-1 text-xs font-medium dark:border-white/10 dark:bg-white/10 dark:text-sky-300"
+              key={tech}
+              className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-medium text-slate-600 dark:border-white/10 dark:bg-white/5 dark:text-slate-300"
             >
               {tech}
             </span>
           ))}
         </div>
 
-        {/* Admin Buttons or Live/GitHub Links */}
-        <div className="mt-6 flex items-center justify-between">
-          {!isAdmin ? (
-            <div className="flex items-center gap-6">
-              {liveUrl && (
-                <a
-                  href={liveUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 font-semibold transition-colors text-sky-700 dark:text-sky-300 dark:hover:text-sky-600 z-20"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <FiExternalLink />
-                  <span>Look Website</span>
-                </a>
-              )}
-              {githubLink && (
-                <a
-                  href={githubLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 font-semibold text-slate-300 transition-colors hover:text-slate-100"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  <FiGithub />
-                  <span>View Code</span>
-                </a>
-              )}
+        <div className="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 dark:border-white/10">
+          {isAdmin ? (
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => navigate(`/admin/edit-work/${id}`)}
+                className="inline-flex items-center gap-2 rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+              >
+                <Pencil className="size-4" />
+                {t("common.edit")}
+              </button>
+              <button
+                type="button"
+                onClick={handleDelete}
+                className="inline-flex items-center gap-2 rounded-lg bg-red-500/10 px-3 py-2 text-sm font-medium text-red-600 transition hover:bg-red-500 hover:text-white"
+              >
+                <Trash2 className="size-4" />
+                {t("common.delete")}
+              </button>
             </div>
           ) : (
-            // ⚙️ For Admin Panel
-            <div className="flex gap-3">
-              <button
-                onClick={() => navigate(`/admin/edit-work/${id}`)}
-                className="flex items-center gap-1 px-3 py-1 text-sm rounded-md bg-sky-500 hover:bg-sky-600 text-white transition"
-              >
-                <FiEdit2 size={14} /> Edit
-              </button>
-              <button
-                onClick={handleDelete}
-                className="flex items-center gap-1 px-3 py-1 text-sm rounded-md bg-red-500 hover:bg-red-600 text-white transition"
-              >
-                <FiTrash2 size={14} /> Delete
-              </button>
-            </div>
+            <>
+              <span className="text-sm font-semibold text-primary">
+                {t("projects.caseStudy")}
+              </span>
+              <div className="flex items-center gap-2">
+                {liveUrl && (
+                  <a
+                    href={liveUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={t("projects.openWebsite", { title })}
+                    className="rounded-full p-2 text-muted-foreground transition hover:bg-primary/10 hover:text-primary"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <ExternalLink className="size-4" />
+                  </a>
+                )}
+                {githubLink && (
+                  <a
+                    href={githubLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={t("projects.openSource", { title })}
+                    className="rounded-full p-2 text-slate-500 transition hover:bg-slate-500/10 hover:text-slate-950 dark:hover:text-white"
+                    onClick={(event) => event.stopPropagation()}
+                  >
+                    <Github className="size-4" />
+                  </a>
+                )}
+              </div>
+            </>
           )}
         </div>
+        {actionError && (
+          <p className="mt-3 text-sm text-red-500">{actionError}</p>
+        )}
       </div>
     </Wrapper>
   );

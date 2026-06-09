@@ -1,6 +1,7 @@
 import axios from "axios";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { API_ENDPOINTS } from "../lib/api";
 
 const Drawer = ({
@@ -10,6 +11,7 @@ const Drawer = ({
   isOpen: boolean;
   onClose: () => void;
 }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -44,17 +46,17 @@ const Drawer = ({
       )}
 
       <div
-        className={`fixed left-0 bottom-0 w-full h-[55vh] bg-[#eeeeee] text-[#1a1a1a] dark:bg-white/5 dark:backdrop-blur-2xl dark:text-[#eeeeee]  rounded-t-2xl shadow-xl z-50 p-6 transition-transform duration-300  
+        className={`fixed left-0 bottom-0 w-full h-[55vh] bg-card text-card-foreground dark:backdrop-blur-2xl rounded-t-2xl shadow-xl z-50 p-6 transition-transform duration-300
         ${isOpen ? "translate-y-0" : "translate-y-full"}
       `}
       >
-        <h2 className="text-2xl font-semibold mb-4">Contact Me</h2>
+        <h2 className="text-2xl font-semibold mb-4">{t("contact.title")}</h2>
 
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
             type="text"
             name="name"
-            placeholder="Your Name"
+            placeholder={t("contact.name")}
             className="p-3 border rounded-lg w-full"
             value={formData.name}
             onChange={handleChange}
@@ -64,7 +66,7 @@ const Drawer = ({
           <input
             type="email"
             name="email"
-            placeholder="Your Email"
+            placeholder={t("contact.email")}
             className="p-3 border rounded-lg w-full"
             value={formData.email}
             onChange={handleChange}
@@ -73,7 +75,7 @@ const Drawer = ({
 
           <textarea
             name="message"
-            placeholder="Your Message"
+            placeholder={t("contact.message")}
             rows={4}
             className="p-3 border rounded-lg w-full resize-none"
             value={formData.message}
@@ -84,12 +86,12 @@ const Drawer = ({
           <div className="w-full flex justify-end">
             <button
               type="submit"
-              className="bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 cursor-pointer transition w-[25  0px]"
+              className="bg-primary text-primary-foreground p-3 rounded-lg hover:bg-primary/90 cursor-pointer transition w-[250px]"
             >
               {loading ? (
                 <Loader2 className="animate-spin mx-auto" />
               ) : (
-                "Send Message"
+                t("contact.send")
               )}
             </button>
           </div>

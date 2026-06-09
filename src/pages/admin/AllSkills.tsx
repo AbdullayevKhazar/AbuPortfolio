@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import SkillsBox from "../../components/SkillsBox";
-import axios from "axios";
-import { API_ENDPOINTS } from "../../lib/api";
+import { apiClient, API_ENDPOINTS } from "../../lib/api";
 
 interface Skill {
   id: string | number;
   name: string;
   description: string;
   imageUrl: string;
+  iconSlug?: string;
+  iconColor?: string;
   _id: string;
 }
 
@@ -23,7 +24,7 @@ const AllSkills = () => {
       try {
         setIsLoading(true);
         setError(null);
-        const res = await axios.get(API_ENDPOINTS.skills.list);
+        const res = await apiClient.get(API_ENDPOINTS.skills.list);
         setSkills(res.data);
       } catch (err) {
         console.error("Failed to fetch skills:", err);
@@ -73,8 +74,15 @@ const AllSkills = () => {
                 name={skill.name}
                 description={skill.description}
                 imageUrl={skill.imageUrl}
+                iconSlug={skill.iconSlug}
+                iconColor={skill.iconColor}
                 forAdmin={true}
                 id={skill._id}
+                onDelete={(deletedId) =>
+                  setSkills((current) =>
+                    current.filter((item) => item._id !== deletedId),
+                  )
+                }
               />
             </div>
           ))}

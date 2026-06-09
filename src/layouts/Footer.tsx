@@ -1,12 +1,5 @@
+import { useTranslation } from "react-i18next";
 import Container from "../components/Container";
-
-// --- Links for Navigation and Socials ---
-// You can manage your links here or pass them as props
-const navLinks = [
-  { title: "Home", href: "/" },
-  { title: "About", href: "skills" },
-  { title: "Projects", href: "projects" },
-];
 
 const socialLinks = [
   { title: "GitHub", href: "https://github.com/AbdullayevKhazar" },
@@ -15,44 +8,50 @@ const socialLinks = [
     href: "https://www.linkedin.com/in/x%C9%99z%C9%99rabdullayev/",
   },
   {
-    title: "Youtube",
+    title: "YouTube",
     href: "https://www.youtube.com/@inlineflexbox",
   },
 ];
-// ----------------------------------------
 
 const Footer = () => {
+  const { t } = useTranslation();
+  const navLinks = [
+    { title: t("nav.home"), href: "/" },
+    { title: t("nav.about"), href: "/skills" },
+    { title: t("nav.projects"), href: "/projects" },
+  ];
+
   return (
-    <footer className="min-h-auto bg-white text-[#1a1a1a] dark:bg-[#0F0E0E]  relative  py-20 dark:text-white">
-      <div className="absolute top-0 left-0 w-full h-full z-0 grid grid-cols-20">
+    <footer className="min-h-auto relative bg-background py-20 text-foreground">
+      <div className="absolute left-0 top-0 z-0 grid h-full w-full grid-cols-20">
         {Array.from({ length: 20 }).map((_, index) => (
-          <div
-            key={index}
-            className="border-l border-black/4 dark:border-gray-50/1 h-full"
-          ></div>
+          <div key={index} className="h-full border-l border-border/40" />
         ))}
       </div>
+
       <Container className="py-10">
-        <div className="relative z-10 border bg-white shadow-lg shadow-black/8 dark:border-white/10 dark:bg-[#0F0E0E] dark:shadow-white/2 rounded-2xl p-8 md:p-16">
-          <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-10">
+        <div className="relative z-10 rounded-2xl border border-border bg-card p-8 shadow-lg shadow-black/8 dark:shadow-black/20 md:p-16">
+          <div className="mb-10 flex flex-col items-start justify-between gap-12 md:flex-row">
             <div className="max-w-md">
-              <h3 className="text-2xl lg:text-3xl font-bold text-[#1a1a1a] dark:text-white mb-3">
+              <h3 className="mb-3 text-2xl font-bold text-foreground lg:text-3xl">
                 Khazar Abdullayev
               </h3>
-              <p className="text-gray-400">
-                Passionate developer creating modern and responsive web
-                applications.
+              <p className="text-muted-foreground">
+                {t("footer.description")}
               </p>
             </div>
-            <div className="flex sm:flex-row gap-10 sm:gap-20">
+
+            <div className="flex gap-10 sm:flex-row sm:gap-20">
               <div>
-                <h4 className="font-semibold dark:text-white mb-4">Navigate</h4>
+                <h4 className="mb-4 font-semibold text-foreground">
+                  {t("footer.navigate")}
+                </h4>
                 <ul className="space-y-2">
                   {navLinks.map((link) => (
-                    <li key={link.title}>
+                    <li key={link.href}>
                       <a
                         href={link.href}
-                        className="text-gray-400 hover:text-[#1a1a1a] dark:hover:text-white transition-colors"
+                        className="text-muted-foreground transition-colors hover:text-primary"
                       >
                         {link.title}
                       </a>
@@ -60,16 +59,19 @@ const Footer = () => {
                   ))}
                 </ul>
               </div>
+
               <div>
-                <h4 className="font-semibold  dark:text-white mb-4">Connect</h4>
+                <h4 className="mb-4 font-semibold text-foreground">
+                  {t("footer.connect")}
+                </h4>
                 <ul className="space-y-2">
                   {socialLinks.map((link) => (
-                    <li key={link.title}>
+                    <li key={link.href}>
                       <a
                         href={link.href}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-400 hover:text-[#1a1a1a] dark:hover:text-white transition-colors"
+                        className="text-muted-foreground transition-colors hover:text-primary"
                       >
                         {link.title}
                       </a>
@@ -80,23 +82,26 @@ const Footer = () => {
             </div>
           </div>
 
-          <hr className="border-white/10" />
+          <hr className="border-border" />
 
-          <div className="flex flex-col md:flex-row text-xs justify-between items-center pt-8 gap-4 text-gray-600 dark:text-gray-300">
+          <div className="flex flex-col items-center justify-between gap-4 pt-8 text-xs text-muted-foreground md:flex-row">
             <div className="flex items-center gap-2">
-              <span>© 2025 Licensed</span>
+              <span>
+                {t("footer.licensed", { year: new Date().getFullYear() })}
+              </span>
               <a
                 href="https://creativecommons.org/licenses/by/4.0/"
                 target="_blank"
-                className="underline text-blue-500 dark:text-blue-400"
+                rel="noopener noreferrer"
+                className="text-primary underline hover:text-primary/80"
               >
                 Creative Commons BY-NC 4.0
               </a>
             </div>
 
-            <p className="text-sm text-gray-500 dark:text-gray-400 text-center md:text-right">
-              Made by <span className="dark:text-white">Khazar</span>{" "}
-              <span className="dark:text-white">Abdullayev</span>
+            <p className="text-center text-sm text-muted-foreground md:text-right">
+              {t("footer.madeBy")}{" "}
+              <span className="text-foreground">Khazar Abdullayev</span>
             </p>
           </div>
         </div>

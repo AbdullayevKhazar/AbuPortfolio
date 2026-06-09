@@ -1,29 +1,29 @@
 import Header from "../../components/Header";
 import Skills from "../../components/Skills";
 import MyWorks from "../../components/MyWorks";
-import Socials from "../../components/Socials";
+import { useTranslation } from "react-i18next";
 
 const Home = () => {
+  const { t } = useTranslation();
   return (
     <>
       <title>XAB</title>
       <meta
         name="description"
-        content="Portfolio website coding by Khazar Abdullayev"
+        content={t("home.metaDescription")}
       />
-      <div className="h-auto w-full bg-white text-[#1a1a1a] dark:bg-[#0F0E0E] dark:text-white relative">
+      <div className="h-auto w-full bg-background text-foreground relative">
         <div className="absolute top-0 left-0 w-full h-full z-0 grid grid-cols-20">
           {Array.from({ length: 20 }).map((_, index) => (
             <div
               key={index}
-              className="border-l border-black/4 dark:border-gray-50/1 h-full"
+              className="h-full border-l border-border/40"
             ></div>
           ))}
         </div>
 
         <div className="relative z-10">
           <Header />
-          <Socials />
           <Skills />
           <MyWorks />
         </div>

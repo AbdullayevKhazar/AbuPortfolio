@@ -1,227 +1,203 @@
-import axios from "axios";
-import { Field, Form, Formik, FieldArray } from "formik";
-import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
+import { Loader2, Plus, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { API_ENDPOINTS } from "../../lib/api";
+import ImageUploadField from "../../components/ImageUploadField";
+import {
+  apiClient,
+  API_ENDPOINTS,
+  getApiErrorMessage,
+} from "../../lib/api";
 
 const validationSchema = Yup.object({
-  companyName: Yup.string().required("Company Name is required"),
-  position: Yup.string().required("Position is required"),
-  companyImage: Yup.string()
-    .url("Must be a valid URL")
-    .required("Company Image is required"),
-
+  companyName: Yup.string().trim().required("Company name is required"),
+  position: Yup.string().trim().required("Position is required"),
   startDate: Yup.date()
-    .required("Start Date is required")
-    .typeError("Invalid date"),
-
+    .required("Start date is required")
+    .typeError("Enter a valid date"),
   endDate: Yup.date()
     .nullable()
     .when("isCurrentJob", {
       is: false,
       then: (schema) =>
-        schema.required("End Date is required").typeError("Invalid date"),
+        schema.required("End date is required").typeError("Enter a valid date"),
       otherwise: (schema) => schema.notRequired(),
     }),
-
+  isCurrentJob: Yup.boolean(),
   myContributions: Yup.array()
-    .of(Yup.string().required("Contribution cannot be empty"))
-    .min(1, "At least 1 contribution is required"),
+    .of(Yup.string().trim().required("Contribution cannot be empty"))
+    .min(1, "Add at least one contribution"),
 });
 
+const fieldClass =
+  "mt-1 w-full rounded-lg border border-input bg-background px-3 py-2.5 outline-none focus:ring-2 focus:ring-ring";
+
 const AddExperience = () => {
+  const navigate = useNavigate();
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState("");
+  const [imageError, setImageError] = useState("");
+
+  useEffect(
+    () => () => {
+      if (preview) URL.revokeObjectURL(preview);
+    },
+    [preview],
+  );
+
+  const updateImage = (file: File | null) => {
+    if (preview) URL.revokeObjectURL(preview);
+    setImage(file);
+    setPreview(file ? URL.createObjectURL(file) : "");
+    setImageError("");
+  };
+
   return (
-    <Formik
-      initialValues={{
-        companyName: "",
-        position: "",
-        companyImage: "",
-        startDate: "",
-        endDate: "",
-        isCurrentJob: true,
-        myContributions: [],
-      }}
-      validationSchema={validationSchema}
-      onSubmit={(values) => {
-        axios.post(API_ENDPOINTS.experience.create, values);
-      }}
-    >
-      {({ values, errors, touched }) => (
-        <Form
-          className="flex flex-col gap-6 p-8 rounded-xl shadow-lg w-full max-w-full
-                       backdrop-blur-lg transition-all duration-300
-                       border border-gray-200
-                       dark:border-white/10 dark:bg-white/5"
-        >
-          {/* Company Name */}
-          <label>
-            Company Name
-            <Field
-              name="companyName"
-              className="w-full px-4 py-2 rounded-md border transition-all duration-300
-                           text-gray-900 dark:text-white
-                           bg-white/50 dark:bg-white/5
-                           border-gray-300 dark:border-white/10
-                           focus:border-blue-500 focus:ring-blue-500
-                           dark:focus:border-blue-400 dark:focus:ring-blue-400
-                           focus:ring-2 focus:outline-none"
-              placeholder="TechNova Solutions"
-            />
-            {touched.companyName && errors.companyName && (
-              <p className="text-red-500 text-sm">{errors.companyName}</p>
-            )}
-          </label>
+    <section className="mx-auto max-w-3xl space-y-6">
+      <div>
+        <p className="text-sm font-medium text-blue-600">Career</p>
+        <h1 className="text-3xl font-bold">Add experience</h1>
+      </div>
 
-          {/* Position */}
-          <label>
-            Position
-            <Field
-              name="position"
-              className="w-full px-4 py-2 rounded-md border transition-all duration-300
-                           text-gray-900 dark:text-white
-                           bg-white/50 dark:bg-white/5
-                           border-gray-300 dark:border-white/10
-                           focus:border-blue-500 focus:ring-blue-500
-                           dark:focus:border-blue-400 dark:focus:ring-blue-400
-                           focus:ring-2 focus:outline-none"
-              placeholder="Frontend Developer"
-            />
-            {touched.position && errors.position && (
-              <p className="text-red-500 text-sm">{errors.position}</p>
-            )}
-          </label>
+      <Formik
+        initialValues={{
+          companyName: "",
+          position: "",
+          startDate: "",
+          endDate: "",
+          isCurrentJob: true,
+          myContributions: [""],
+        }}
+        validationSchema={validationSchema}
+        onSubmit={async (values, { setSubmitting, setStatus }) => {
+          if (!image) {
+            setImageError("Company image is required.");
+            setSubmitting(false);
+            return;
+          }
 
-          {/* Company Image */}
-          <label>
-            Company Image URL
-            <Field
-              name="companyImage"
-              className="w-full px-4 py-2 rounded-md border transition-all duration-300
-                           text-gray-900 dark:text-white
-                           bg-white/50 dark:bg-white/5
-                           border-gray-300 dark:border-white/10
-                           focus:border-blue-500 focus:ring-blue-500
-                           dark:focus:border-blue-400 dark:focus:ring-blue-400
-                           focus:ring-2 focus:outline-none"
-              placeholder="https://example.com/img.png"
-            />
-            {touched.companyImage && errors.companyImage && (
-              <p className="text-red-500 text-sm">{errors.companyImage}</p>
-            )}
-          </label>
+          setStatus("");
+          try {
+            const formData = new FormData();
+            formData.append("companyName", values.companyName.trim());
+            formData.append("position", values.position.trim());
+            formData.append("companyImage", image);
+            formData.append("startDate", values.startDate);
+            formData.append("endDate", values.isCurrentJob ? "" : values.endDate);
+            formData.append("isCurrentJob", String(values.isCurrentJob));
+            formData.append(
+              "myContributions",
+              JSON.stringify(
+                values.myContributions.map((item) => item.trim()),
+              ),
+            );
 
-          {/* Start Date */}
-          <label>
-            Start Date
-            <Field
-              name="startDate"
-              type="date"
-              className="w-full px-4 py-2 rounded-md border transition-all duration-300
-                           text-gray-900 dark:text-white
-                           bg-white/50 dark:bg-white/5
-                           border-gray-300 dark:border-white/10
-                           focus:border-blue-500 focus:ring-blue-500
-                           dark:focus:border-blue-400 dark:focus:ring-blue-400
-                           focus:ring-2 focus:outline-none"
+            await apiClient.post(API_ENDPOINTS.experience.create, formData);
+            navigate("/admin/experience");
+          } catch (error) {
+            setStatus(
+              getApiErrorMessage(error, "Failed to create experience."),
+            );
+          } finally {
+            setSubmitting(false);
+          }
+        }}
+      >
+        {({ values, isSubmitting, status, setFieldValue }) => (
+          <Form className="space-y-6 rounded-2xl border bg-card p-5 shadow-sm md:p-8">
+            <ImageUploadField
+              label="Company logo"
+              description="The image will be optimized and stored in Cloudinary."
+              preview={preview}
+              onChange={updateImage}
+              required
             />
-            {touched.startDate && errors.startDate && (
-              <p className="text-red-500 text-sm">{errors.startDate}</p>
-            )}
-          </label>
+            {imageError && <p className="text-sm text-red-500">{imageError}</p>}
 
-          {/* End Date — only if not current job */}
-          {!values.isCurrentJob && (
-            <label>
-              End Date
-              <Field
-                name="endDate"
-                type="date"
-                className="w-full px-4 py-2 rounded-md border transition-all duration-300
-                           text-gray-900 dark:text-white
-                           bg-white/50 dark:bg-white/5
-                           border-gray-300 dark:border-white/10
-                           focus:border-blue-500 focus:ring-blue-500
-                           dark:focus:border-blue-400 dark:focus:ring-blue-400
-                           focus:ring-2 focus:outline-none"
-              />
-              {touched.endDate && errors.endDate && (
-                <p className="text-red-500 text-sm">{errors.endDate}</p>
+            <div className="grid gap-5 md:grid-cols-2">
+              <label className="text-sm font-medium">
+                Company name
+                <Field name="companyName" className={fieldClass} />
+                <ErrorMessage name="companyName" component="p" className="mt-1 text-sm text-red-500" />
+              </label>
+              <label className="text-sm font-medium">
+                Position
+                <Field name="position" className={fieldClass} />
+                <ErrorMessage name="position" component="p" className="mt-1 text-sm text-red-500" />
+              </label>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <label className="text-sm font-medium">
+                Start date
+                <Field name="startDate" type="date" className={fieldClass} />
+                <ErrorMessage name="startDate" component="p" className="mt-1 text-sm text-red-500" />
+              </label>
+              {!values.isCurrentJob && (
+                <label className="text-sm font-medium">
+                  End date
+                  <Field name="endDate" type="date" className={fieldClass} />
+                  <ErrorMessage name="endDate" component="p" className="mt-1 text-sm text-red-500" />
+                </label>
               )}
+            </div>
+
+            <label className="flex items-center gap-3 rounded-lg border p-3 text-sm font-medium">
+              <Field
+                type="checkbox"
+                name="isCurrentJob"
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  void setFieldValue("isCurrentJob", event.target.checked);
+                  if (event.target.checked) void setFieldValue("endDate", "");
+                }}
+                className="size-4 accent-blue-600"
+              />
+              I currently work here
             </label>
-          )}
 
-          <label className="flex items-center gap-2">
-            <Field type="checkbox" name="isCurrentJob" />
-            Is Current Job?
-          </label>
-
-          <div>
-            <label className="font-semibold">My Contributions</label>
-
-            <FieldArray
-              name="myContributions"
-              render={(arrayHelpers) => (
-                <div className="flex flex-col justify-end gap-2 mt-2">
-                  {values.myContributions.length > 0 &&
-                    values.myContributions.map((_, index) => (
-                      <div key={index} className="flex gap-2">
-                        <Field
-                          name={`myContributions.${index}`}
-                          className="w-full px-4 py-2 rounded-md border transition-all duration-300
-                           text-gray-900 dark:text-white
-                           bg-white/50 dark:bg-white/5
-                           border-gray-300 dark:border-white/10
-                           focus:border-blue-500 focus:ring-blue-500
-                           dark:focus:border-blue-400 dark:focus:ring-blue-400
-                           focus:ring-2 focus:outline-none"
-                        />
-
+            <FieldArray name="myContributions">
+              {({ push, remove }) => (
+                <div className="space-y-3">
+                  <h2 className="font-semibold">Contributions</h2>
+                  {values.myContributions.map((_, index) => (
+                    <div key={index}>
+                      <div className="flex gap-2">
+                        <Field name={`myContributions.${index}`} className={fieldClass} />
                         <button
                           type="button"
-                          onClick={() => arrayHelpers.remove(index)}
-                          className="px-3 py-1 bg-red-500 text-white rounded"
+                          disabled={values.myContributions.length === 1}
+                          onClick={() => remove(index)}
+                          className="mt-1 rounded-lg p-2.5 text-red-500 hover:bg-red-500/10 disabled:opacity-30"
+                          aria-label={`Remove contribution ${index + 1}`}
                         >
-                          -
+                          <Trash2 className="size-5" />
                         </button>
                       </div>
-                    ))}
-
-                  {errors.myContributions &&
-                    typeof errors.myContributions === "string" && (
-                      <p className="text-red-500 text-sm">
-                        {errors.myContributions}
-                      </p>
-                    )}
-
-                  <button
-                    type="button"
-                    onClick={() => arrayHelpers.push("")}
-                    className="max-w-max py-2.5 px-5 rounded-lg font-semibold text-white transition-all duration-300
-                         bg-blue-600 hover:bg-blue-700
-                         dark:bg-blue-500 dark:hover:bg-blue-400
-                         disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {" "}
-                    <Plus />
+                      <ErrorMessage name={`myContributions.${index}`} component="p" className="mt-1 text-sm text-red-500" />
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => push("")} className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium hover:bg-accent">
+                    <Plus className="size-4" /> Add contribution
                   </button>
                 </div>
               )}
-            />
-          </div>
+            </FieldArray>
 
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full py-2.5 px-5 rounded-lg font-semibold text-white transition-all duration-300
-                         bg-blue-600 hover:bg-blue-700
-                         dark:bg-blue-500 dark:hover:bg-blue-400
-                         disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Submit
-          </button>
-        </Form>
-      )}
-    </Formik>
+            {status && <p className="text-sm text-red-500">{status}</p>}
+            <div className="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:justify-end">
+              <button type="button" onClick={() => navigate("/admin/experience")} className="rounded-lg border px-5 py-2.5 font-medium hover:bg-accent">
+                Cancel
+              </button>
+              <button type="submit" disabled={isSubmitting} className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white hover:bg-blue-700 disabled:opacity-60">
+                {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+                Add experience
+              </button>
+            </div>
+          </Form>
+        )}
+      </Formik>
+    </section>
   );
 };
 

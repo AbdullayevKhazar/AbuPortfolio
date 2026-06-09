@@ -1,0 +1,89 @@
+{
+  "common": {
+    "present": "Davam Edir",
+    "project": "Layihə",
+    "loading": "Yüklənir...",
+    "edit": "Redaktə et",
+    "delete": "Sil"
+  },
+  "nav": {
+    "home": "Ana səhifə",
+    "about": "Haqqımda",
+    "projects": "Layihələr",
+    "contact": "Əlaqə",
+    "toggleTheme": "Rəng rejimini dəyiş",
+    "openMenu": "Menyunu aç",
+    "closeMenu": "Menyunu bağla"
+  },
+  "header": {
+    "location": "Azərbaycanda yaşayıram",
+    "intro": "Salam, mən Xəzər,",
+    "role": "Front-End Developer",
+    "description": "Düşünülmüş və müasir rəqəmsal təcrübələr hazırlamağa həvəsliyəm.",
+    "works": "İşlərimə bax",
+    "cv": "CV-mə bax",
+    "scroll": "Aşağı sürüşdür"
+  },
+  "skills": {
+    "title": "Hazırkı bacarıqlarım",
+    "loadError": "Bacarıqları yükləmək mümkün olmadı.",
+    "deleteConfirm": "{{name}} silinsin?",
+    "deleteLabel": "{{name}} bacarığını sil"
+  },
+  "projects": {
+    "title": "Layihələr",
+    "all": "Bütün layihələrə bax",
+    "drag": "Baxmaq üçün sürüşdür",
+    "featured": "Seçilmiş",
+    "caseStudy": "Layihəyə bax",
+    "coverAlt": "{{title}} layihəsinin üz qabığı",
+    "openWebsite": "{{title}} saytını aç",
+    "openSource": "{{title}} mənbə kodunu aç",
+    "deleteConfirm": "Bu layihəni silmək istədiyinizə əminsiniz?",
+    "deleteError": "Layihəni silmək mümkün olmadı.",
+    "empty": "Hələ heç bir layihə əlavə edilməyib.",
+    "details": {
+      "pageTitle": "{{name}} | Layihə",
+      "loadError": "Layihə məlumatlarını yükləmək mümkün olmadı.",
+      "loading": "Layihə yüklənir...",
+      "notFound": "Layihə tapılmadı.",
+      "allProjects": "Bütün layihələr",
+      "liveSite": "Canlı sayta bax",
+      "source": "Mənbə koduna bax",
+      "imageAlt": "{{name}} interfeysi",
+      "about": "Layihə haqqında",
+      "technology": "Texnologiyalar"
+    }
+  },
+  "about": {
+    "pageTitle": "Təcrübə və təhsil | Xəzər Abdullayev",
+    "metaDescription": "Xəzər Abdullayevin iş təcrübəsi və təhsil məlumatları.",
+    "work": "İş təcrübəsi",
+    "education": "Təhsil",
+    "loadError": "Məlumatları yükləmək mümkün olmadı.",
+    "empty": "Hələ heç bir məlumat əlavə edilməyib.",
+    "logoAlt": "{{name}} loqosu"
+  },
+  "contact": {
+    "title": "Mənimlə əlaqə",
+    "name": "Adınız",
+    "email": "E-poçt ünvanınız",
+    "message": "Mesajınız",
+    "send": "Mesajı göndər"
+  },
+  "footer": {
+    "description": "Müasir və adaptiv veb tətbiqlər hazırlayan həvəsli developer.",
+    "navigate": "Keçidlər",
+    "connect": "Əlaqə",
+    "licensed": "© {{year}} Lisenziyalıdır",
+    "madeBy": "Hazırladı"
+  },
+  "errorPage": {
+    "title": "Xəta 404",
+    "message": "Bu səhifəyə necə gəlib çıxdınız? Axtardığınız səhifə mövcud deyil.",
+    "home": "Ana səhifəyə qayıt"
+  },
+  "home": {
+    "metaDescription": "Front-end developer Xəzər Abdullayevin portfolio saytı."
+  }
+}

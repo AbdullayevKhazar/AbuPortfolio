@@ -34,5 +34,8 @@ export const clearAdminAuth = () => {
 
 export const isAdminAuthenticated = () => {
   const auth = getAdminAuth();
-  return Boolean(auth?.accessToken && auth.user?.role === "admin");
+  return Boolean(
+    auth?.accessToken &&
+      (auth.user?.role === "admin" || auth.user?.role === "superadmin"),
+  );
 };

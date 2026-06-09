@@ -1,162 +1,129 @@
 import axios from "axios";
+import { ArrowLeft, ExternalLink, Github } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import Container from "../../components/Container";
 import { API_ENDPOINTS } from "../../lib/api";
-
-interface Work {
-  _id: string;
-  projectName: string;
-  projectDetails: string;
-  mainImage: string;
-  usingTech: string[];
-  projectLink?: string;
-  githubLink: string;
-}
+import type { Work } from "../../types/work";
+import { useTranslation } from "react-i18next";
 
 const ProjectDetails = () => {
+  const { t } = useTranslation();
   const { id } = useParams();
   const [work, setWork] = useState<Work | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const fetchDetails = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const res = await axios.get(API_ENDPOINTS.works.getById(id!));
-        setWork(res.data);
-      } catch (err) {
-        console.error("Failed to fetch project:", err);
-        setError("Failed to load project details. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchDetails();
-  }, [id]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
-  }, [id]);
+    axios
+      .get<Work>(API_ENDPOINTS.works.getById(id!))
+      .then((response) => setWork(response.data))
+      .catch(() => setError(t("projects.details.loadError")))
+      .finally(() => setLoading(false));
+  }, [id, t]);
 
-  if (loading) {
+  if (loading || error || !work) {
     return (
-      <div className="min-h-dvh bg-white text-[#1a1a1a] dark:bg-[#0F0E0E] dark:text-white flex items-center justify-center">
-        <h1 className="text-3xl">Loading...</h1>
+      <div className="flex min-h-dvh items-center justify-center bg-background text-foreground text-xl">
+        {loading
+          ? t("projects.details.loading")
+          : error || t("projects.details.notFound")}
       </div>
     );
   }
-
-  if (error) {
-    return (
-      <div className="min-h-dvh bg-white text-[#1a1a1a] dark:bg-[#0F0E0E] dark:text-white flex items-center justify-center">
-        <h1 className="text-3xl text-red-500">{error}</h1>
-      </div>
-    );
-  }
-
-  if (!work) {
-    return (
-      <div className="min-h-dvh bg-white text-[#1a1a1a] dark:bg-[#0F0E0E] dark:text-white flex items-center justify-center">
-        <h1 className="text-3xl">Project not found.</h1>
-      </div>
-    );
-  }
-  console.log(work.projectName);
 
   return (
-    <>
-      <title>Project Details</title>
+    <main className="min-h-dvh bg-background pb-24 pt-32 text-foreground">
+      <title>
+        {t("projects.details.pageTitle", { name: work.projectName })}
+      </title>
       <meta
         name="description"
-        content={`Detailed view of the project ${work.projectName} by Khazar Abdullayev.`}
+        content={work.shortDescription || work.projectDetails.slice(0, 160)}
       />
-      <div className="relative min-h-dvh bg-white text-[#1a1a1a] dark:bg-[#0F0E0E] dark:text-white pt-24 md:pt-60">
-        {/* Grid background */}
-        <div className="absolute top-0 left-0 w-full h-full z-0 grid grid-cols-20">
-          {Array.from({ length: 20 }).map((_, index) => (
-            <div
-              key={index}
-              className="border-l border-gray-300/30 dark:border-gray-50/2 h-full"
-            ></div>
-          ))}
-        </div>
 
-        <div className="relative z-10 max-w-6xl mx-auto px-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-10 text-center">
-            {work.projectName}
-          </h1>
+      <Container className="">
+        <Link
+          to="/projects"
+          className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground transition hover:text-primary"
+        >
+          <ArrowLeft className="size-4" />
+          {t("projects.details.allProjects")}
+        </Link>
 
-          {/* Iframe preview */}
-          <div className="mb-10 shadow-lg rounded-lg overflow-hidden bg-gray-200 dark:bg-transparent">
-            <iframe
-              src={work.projectLink}
-              className="w-full h-[80vh]"
-              loading="lazy"
-            />
+        <div className="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-end">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.2em] text-primary">
+              {work.category || t("common.project")}
+            </p>
+            <h1 className="mt-4 text-4xl font-bold tracking-tight sm:text-6xl">
+              {work.projectName}
+            </h1>
           </div>
 
-          {/* About + Technologies */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
-            <div className="md:col-span-2">
-              <h2 className="text-2xl md:text-3xl font-semibold mb-4">
-                About this project
-              </h2>
-              <p className="text-base md:text-lg text-gray-700 dark:text-gray-400 leading-normal">
-                {work.projectDetails}
-              </p>
-            </div>
-
-            <div>
-              <h2 className="text-2xl md:text-3xl font-semibold mb-4">
-                Technologies Used
-              </h2>
-              <ul className="flex flex-wrap gap-2">
-                {work.usingTech.map((tech) => (
-                  <li
-                    key={tech}
-                    className="bg-gray-200 text-[#1a1a1a] dark:bg-[#1a1a1a] dark:text-sky-300 px-3 py-2 rounded-full text-sm"
-                  >
-                    {tech}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
-          {/* Action buttons */}
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            {work.projectLink && (
+          <div className="flex flex-wrap gap-3 lg:justify-end">
+            {work.isLive && work.projectLink && (
               <a
                 href={work.projectLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold py-3 px-6 rounded-lg transition-colors w-full sm:w-auto text-center
-                           bg-gray-200 text-sky-600 hover:bg-gray-300 hover:text-sky-700
-                           dark:bg-[#1e1e1e] dark:text-sky-300 dark:hover:text-sky-500 dark:hover:bg-white/5"
+                className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90"
               >
-                View Live Project
+                <ExternalLink className="size-4" />
+                {t("projects.details.liveSite")}
               </a>
             )}
-
             {work.githubLink && (
               <a
                 href={work.githubLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold py-3 px-6 rounded-lg transition-colors w-full sm:w-auto text-center
-                           bg-gray-800 text-white hover:bg-gray-900
-                           dark:bg-gray-700 dark:hover:bg-gray-800"
+                className="inline-flex items-center gap-2 rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold transition hover:border-slate-900 dark:border-white/15 dark:hover:border-white"
               >
-                View GitHub Repo
+                <Github className="size-4" />
+                {t("projects.details.source")}
               </a>
             )}
           </div>
         </div>
-      </div>
-    </>
+
+        <div className="mt-14 overflow-hidden rounded-3xl border border-slate-200 bg-slate-100 shadow-2xl dark:border-white/10 dark:bg-white/5">
+          <img
+            src={work.mainImage}
+            alt={t("projects.details.imageAlt", { name: work.projectName })}
+            className="aspect-[16/9] w-full object-cover"
+          />
+        </div>
+
+        <div className="mt-14 space-y-12">
+          <section>
+            <h2 className="text-2xl font-semibold">
+              {t("projects.details.technology")}
+            </h2>
+            <div className="mt-5 flex flex-wrap gap-2">
+              {work.usingTech.map((tech) => (
+                <span
+                  key={tech}
+                  className="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-medium dark:border-white/10 dark:bg-white/5"
+                >
+                  {tech}
+                </span>
+              ))}
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-semibold">
+              {t("projects.details.about")}
+            </h2>
+            <p className="mt-5 max-w-4xl whitespace-pre-line text-base leading-8 text-slate-600 dark:text-slate-400">
+              {work.projectDetails}
+            </p>
+          </section>
+        </div>
+      </Container>
+    </main>
   );
 };
 

@@ -1,10 +1,14 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useParams, useNavigate } from "react-router-dom";
-import { Formik, Form, Field, FieldArray } from "formik";
+import { useEffect, useState } from "react";
+import { ErrorMessage, Field, FieldArray, Form, Formik } from "formik";
+import { Loader2, Plus, Trash2 } from "lucide-react";
+import { useNavigate, useParams } from "react-router-dom";
 import * as Yup from "yup";
-import { Plus, Trash2 } from "lucide-react";
-import { API_ENDPOINTS } from "../../lib/api";
+import ImageUploadField from "../../components/ImageUploadField";
+import {
+  apiClient,
+  API_ENDPOINTS,
+  getApiErrorMessage,
+} from "../../lib/api";
 
 interface Experience {
   companyName: string;
@@ -16,184 +20,214 @@ interface Experience {
   myContributions: string[];
 }
 
-const validationSchema = Yup.object().shape({
-  companyName: Yup.string().required("Required"),
-  position: Yup.string().required("Required"),
-  companyImage: Yup.string().url("Invalid URL").required("Image URL required"),
-  startDate: Yup.string().required("Start date required"),
+const validationSchema = Yup.object({
+  companyName: Yup.string().trim().required("Company name is required"),
+  position: Yup.string().trim().required("Position is required"),
+  startDate: Yup.string().required("Start date is required"),
   endDate: Yup.string().nullable(),
   isCurrentJob: Yup.boolean(),
-  myContributions: Yup.array().of(Yup.string().required("Cannot be empty")),
+  myContributions: Yup.array()
+    .of(Yup.string().trim().required("Contribution cannot be empty"))
+    .min(1, "Add at least one contribution"),
 });
+
+const fieldClass =
+  "mt-1 w-full rounded-lg border border-input bg-background px-3 py-2.5 outline-none focus:ring-2 focus:ring-ring";
+
+const toDateInput = (value?: string) =>
+  value ? new Date(value).toISOString().slice(0, 10) : "";
 
 const EditExperience = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
   const [initialValues, setInitialValues] = useState<Experience | null>(null);
-
-  const fetchExperience = async () => {
-    try {
-      const res = await axios.get(API_ENDPOINTS.experience.getById(id!));
-      setInitialValues(res.data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const [originalImage, setOriginalImage] = useState("");
+  const [image, setImage] = useState<File | null>(null);
+  const [preview, setPreview] = useState("");
+  const [pageError, setPageError] = useState("");
 
   useEffect(() => {
-    fetchExperience();
+    apiClient
+      .get<Experience>(API_ENDPOINTS.experience.getById(id!))
+      .then(({ data }) => {
+        setOriginalImage(data.companyImage);
+        setPreview(data.companyImage);
+        setInitialValues({
+          ...data,
+          startDate: toDateInput(data.startDate),
+          endDate: toDateInput(data.endDate),
+          myContributions: data.myContributions.length
+            ? data.myContributions
+            : [""],
+        });
+      })
+      .catch((error) =>
+        setPageError(
+          getApiErrorMessage(error, "Failed to load experience."),
+        ),
+      );
   }, [id]);
 
-  if (!initialValues) return <p className="text-center py-10">Loading...</p>;
+  useEffect(
+    () => () => {
+      if (image && preview) URL.revokeObjectURL(preview);
+    },
+    [image, preview],
+  );
 
-  const handleSubmit = async (values: Experience) => {
-    try {
-      await axios.put(API_ENDPOINTS.experience.update(id!), values);
-      navigate("/admin/experience");
-    } catch (err) {
-      console.log(err);
-    }
+  const updateImage = (file: File | null) => {
+    if (image && preview) URL.revokeObjectURL(preview);
+    setImage(file);
+    setPreview(file ? URL.createObjectURL(file) : originalImage);
   };
 
+  if (!initialValues) {
+    return pageError ? (
+      <p className="py-10 text-center text-red-500">{pageError}</p>
+    ) : (
+      <div className="flex min-h-64 items-center justify-center gap-2">
+        <Loader2 className="size-5 animate-spin" /> Loading experience...
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-6">
-      <h1 className="text-2xl font-semibold">Edit Experience</h1>
+    <section className="mx-auto max-w-3xl space-y-6">
+      <div>
+        <p className="text-sm font-medium text-blue-600">Career</p>
+        <h1 className="text-3xl font-bold">Edit experience</h1>
+      </div>
 
       <Formik
-        enableReinitialize
         initialValues={initialValues}
         validationSchema={validationSchema}
-        onSubmit={handleSubmit}
+        onSubmit={async (values, { setSubmitting, setStatus }) => {
+          setStatus("");
+          try {
+            const formData = new FormData();
+            formData.append("companyName", values.companyName.trim());
+            formData.append("position", values.position.trim());
+            formData.append("startDate", values.startDate);
+            formData.append("endDate", values.isCurrentJob ? "" : values.endDate || "");
+            formData.append("isCurrentJob", String(values.isCurrentJob));
+            formData.append(
+              "myContributions",
+              JSON.stringify(
+                values.myContributions.map((item) => item.trim()),
+              ),
+            );
+            if (image) formData.append("companyImage", image);
+
+            await apiClient.put(
+              API_ENDPOINTS.experience.update(id!),
+              formData,
+            );
+            navigate("/admin/experience");
+          } catch (error) {
+            setStatus(
+              getApiErrorMessage(error, "Failed to update experience."),
+            );
+          } finally {
+            setSubmitting(false);
+          }
+        }}
       >
-        {({ values, errors, touched, setFieldValue }) => (
-          <Form className="space-y-6">
-            {/* Company Name */}
-            <div>
-              <label className="font-medium">Company Name</label>
-              <Field
-                name="companyName"
-                className="w-full p-2 border rounded-lg mt-1"
-              />
-              {touched.companyName && errors.companyName && (
-                <p className="text-red-500 text-sm">{errors.companyName}</p>
+        {({ values, isSubmitting, status, setFieldValue }) => (
+          <Form className="space-y-6 rounded-2xl border bg-card p-5 shadow-sm md:p-8">
+            <ImageUploadField
+              label="Company logo"
+              description={
+                image
+                  ? "A new image is selected. Remove it to restore the current logo."
+                  : "Choose a new image only when you want to replace the current logo."
+              }
+              preview={preview}
+              onChange={updateImage}
+              required
+              showRemove={Boolean(image)}
+            />
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <label className="text-sm font-medium">
+                Company name
+                <Field name="companyName" className={fieldClass} />
+                <ErrorMessage name="companyName" component="p" className="mt-1 text-sm text-red-500" />
+              </label>
+              <label className="text-sm font-medium">
+                Position
+                <Field name="position" className={fieldClass} />
+                <ErrorMessage name="position" component="p" className="mt-1 text-sm text-red-500" />
+              </label>
+            </div>
+
+            <div className="grid gap-5 md:grid-cols-2">
+              <label className="text-sm font-medium">
+                Start date
+                <Field name="startDate" type="date" className={fieldClass} />
+              </label>
+              {!values.isCurrentJob && (
+                <label className="text-sm font-medium">
+                  End date
+                  <Field name="endDate" type="date" className={fieldClass} />
+                </label>
               )}
             </div>
 
-            {/* Position */}
-            <div>
-              <label className="font-medium">Position</label>
-              <Field
-                name="position"
-                className="w-full p-2 border rounded-lg mt-1"
-              />
-              {touched.position && errors.position && (
-                <p className="text-red-500 text-sm">{errors.position}</p>
-              )}
-            </div>
-
-            {/* Company Image URL */}
-            <div>
-              <label className="font-medium">Company Image URL</label>
-              <Field
-                name="companyImage"
-                className="w-full p-2 border rounded-lg mt-1"
-              />
-              {touched.companyImage && errors.companyImage && (
-                <p className="text-red-500 text-sm">{errors.companyImage}</p>
-              )}
-            </div>
-
-            {/* Dates */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="font-medium">Start Date</label>
-                <Field
-                  type="date"
-                  name="startDate"
-                  className="w-full p-2 border rounded-lg mt-1"
-                />
-                {touched.startDate && errors.startDate && (
-                  <p className="text-red-500 text-sm">{errors.startDate}</p>
-                )}
-              </div>
-
-              <div>
-                <label className="font-medium">End Date</label>
-                <Field
-                  type="date"
-                  name="endDate"
-                  disabled={values.isCurrentJob}
-                  className="w-full p-2 border rounded-lg mt-1 disabled:bg-gray-200"
-                />
-              </div>
-            </div>
-
-            {/* Is Current Job */}
-            <label className="flex items-center gap-2">
+            <label className="flex items-center gap-3 rounded-lg border p-3 text-sm font-medium">
               <Field
                 type="checkbox"
                 name="isCurrentJob"
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setFieldValue("isCurrentJob", e.target.checked);
-                  if (e.target.checked) setFieldValue("endDate", "");
+                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  void setFieldValue("isCurrentJob", event.target.checked);
+                  if (event.target.checked) void setFieldValue("endDate", "");
                 }}
+                className="size-4 accent-blue-600"
               />
-              Currently Working Here
+              I currently work here
             </label>
 
-            {/* Contributions */}
-            <div>
-              <label className="font-medium">My Contributions</label>
-
-              <FieldArray name="myContributions">
-                {({ push, remove }) => (
-                  <div className="space-y-3 mt-2">
-                    {values.myContributions.map((_, index) => (
-                      <div key={index} className="flex items-center gap-3">
-                        <Field
-                          name={`myContributions.${index}`}
-                          className="w-full p-2 border rounded-lg"
-                          placeholder="Contribution..."
-                        />
+            <FieldArray name="myContributions">
+              {({ push, remove }) => (
+                <div className="space-y-3">
+                  <h2 className="font-semibold">Contributions</h2>
+                  {values.myContributions.map((_, index) => (
+                    <div key={index}>
+                      <div className="flex gap-2">
+                        <Field name={`myContributions.${index}`} className={fieldClass} />
                         <button
                           type="button"
+                          disabled={values.myContributions.length === 1}
                           onClick={() => remove(index)}
-                          className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                          className="mt-1 rounded-lg p-2.5 text-red-500 hover:bg-red-500/10 disabled:opacity-30"
+                          aria-label={`Remove contribution ${index + 1}`}
                         >
-                          <Trash2 size={16} />
+                          <Trash2 className="size-5" />
                         </button>
                       </div>
-                    ))}
-
-                    <button
-                      type="button"
-                      onClick={() => push("")}
-                      className="flex items-center gap-2 mt-3 px-3 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
-                    >
-                      <Plus size={16} />
-                      Add Contribution
-                    </button>
-                  </div>
-                )}
-              </FieldArray>
-
-              {typeof errors.myContributions === "string" && (
-                <p className="text-red-500 text-sm">{errors.myContributions}</p>
+                      <ErrorMessage name={`myContributions.${index}`} component="p" className="mt-1 text-sm text-red-500" />
+                    </div>
+                  ))}
+                  <button type="button" onClick={() => push("")} className="flex items-center gap-2 rounded-lg border px-4 py-2 text-sm font-medium hover:bg-accent">
+                    <Plus className="size-4" /> Add contribution
+                  </button>
+                </div>
               )}
-            </div>
+            </FieldArray>
 
-            {/* Submit */}
-            <button
-              type="submit"
-              className="w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
-            >
-              Save Changes
-            </button>
+            {status && <p className="text-sm text-red-500">{status}</p>}
+            <div className="flex flex-col-reverse gap-3 border-t pt-6 sm:flex-row sm:justify-end">
+              <button type="button" onClick={() => navigate("/admin/experience")} className="rounded-lg border px-5 py-2.5 font-medium hover:bg-accent">
+                Cancel
+              </button>
+              <button type="submit" disabled={isSubmitting} className="flex items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 font-semibold text-white hover:bg-blue-700 disabled:opacity-60">
+                {isSubmitting && <Loader2 className="size-4 animate-spin" />}
+                Save changes
+              </button>
+            </div>
           </Form>
         )}
       </Formik>
-    </div>
+    </section>
   );
 };
 

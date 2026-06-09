@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { HiMenu, HiX } from "react-icons/hi";
 import { Link } from "react-router-dom";
 import { BsSun, BsMoon } from "react-icons/bs";
+import { useTranslation } from "react-i18next";
 
 const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
+  const { t, i18n } = useTranslation();
   const [isOpen, setIsOpen] = useState(false);
   const [isDark, setIsDark] = useState(() => {
     return localStorage.getItem("theme") === "dark";
@@ -20,10 +22,10 @@ const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
   }, [isDark]);
 
   const navLinks = [
-    { name: "Home", path: "/" },
-    { name: "About", path: "/skills" },
-    { name: "Projects", path: "/projects" },
-    { name: "Contact", path: null },
+    { name: t("nav.home"), path: "/" },
+    { name: t("nav.about"), path: "/skills" },
+    { name: t("nav.projects"), path: "/projects" },
+    { name: t("nav.contact"), path: null },
   ];
 
   useEffect(() => {
@@ -39,10 +41,35 @@ const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
   }, []);
 
   const handleLinkClick = () => setIsOpen(false);
+  const currentLanguage = i18n.resolvedLanguage || i18n.language;
+
+  const handleLanguageChange = (language: "az" | "en") => {
+    void i18n.changeLanguage(language);
+    localStorage.setItem("language", language);
+  };
+
+  const languageSwitcher = (
+    <div className="flex items-center rounded-md border border-border p-0.5">
+      {(["az", "en"] as const).map((language) => (
+        <button
+          key={language}
+          type="button"
+          onClick={() => handleLanguageChange(language)}
+          className={`rounded px-2 py-1 text-xs uppercase transition-colors ${
+            currentLanguage === language
+              ? "bg-primary text-primary-foreground"
+              : "text-muted-foreground hover:text-foreground"
+          }`}
+        >
+          {language}
+        </button>
+      ))}
+    </div>
+  );
 
   const mobileMenuClasses = `
-      fixed top-0 right-0 w-3/4 max-w-sm h-screen bg-white text-[#1a1a1a] dark:text-[#eeeeee]
-      dark:bg-[#1A1A1A] z-40 shadow-2xl
+      fixed top-0 right-0 w-3/4 max-w-sm h-screen bg-card text-card-foreground
+      z-40 shadow-2xl
       flex flex-col items-center justify-center 
       transform transition-transform duration-300 ease-in-out
     `;
@@ -50,14 +77,14 @@ const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
   return (
     <header className="relative">
       {/* DESKTOP */}
-      <div className="hidden md:block max-w-xl px-5 py-2 absolute top-10 left-1/2 -translate-x-1/2 z-50 text-sm bg-white text-black dark:bg-[#1A1A1A] dark:text-[#eeeeee] border border-gray-300 dark:border-gray-50/10 rounded-md">
+      <div className="hidden md:block max-w-full px-5 py-2 absolute top-10 left-1/2 -translate-x-1/2 z-50 text-sm bg-card text-card-foreground border border-border rounded-md shadow-sm">
         <nav className="flex justify-between gap-10 items-center">
           {navLinks.map((link) =>
             link.path ? (
               <Link
                 key={link.name}
                 to={link.path}
-                className="text-black/70 dark:text-[#eeeeee]/70 hover:text-black dark:hover:text-white transition-colors"
+                className="text-black/70 dark:text-soft/70 hover:text-black dark:hover:text-white transition-colors"
               >
                 {link.name}
               </Link>
@@ -65,14 +92,18 @@ const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
               <button
                 key={link.name}
                 onClick={openDrawer}
-                className="text-black/70 dark:text-[#eeeeee]/70 hover:text-black dark:hover:text-white transition-colors cursor-pointer"
+                className="text-black/70 dark:text-soft/70 hover:text-black dark:hover:text-white transition-colors cursor-pointer"
               >
                 {link.name}
               </button>
-            )
+            ),
           )}
 
+          {languageSwitcher}
+
           <button
+            type="button"
+            aria-label={t("nav.toggleTheme")}
             onClick={() => setIsDark((prev) => !prev)}
             className="relative hover:bg-gray-100 dark:hover:bg-white/10 transition-colors duration-300 rounded-lg p-2 cursor-pointer"
           >
@@ -81,7 +112,7 @@ const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
                 <BsSun />
               </span>
             ) : (
-              <span className="text-blue-500">
+              <span className="text-primary">
                 <BsMoon />
               </span>
             )}
@@ -91,17 +122,16 @@ const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
 
       {/* MOBILE */}
       <div className="md:hidden fixed top-0 left-0 right-0 z-50">
-        <div className="flex justify-between items-center px-5 py-4 bg-white dark:bg-[#1A1A1A] border-b border-gray-300 dark:border-gray-50/10">
-          <Link
-            to="/"
-            className="font-bold text-lg text-[#1a1a1a] dark:text-white"
-          >
+        <div className="flex justify-between items-center px-5 py-4 bg-card border-b border-border">
+          <Link to="/" className="font-bold text-lg text-ink dark:text-white">
             XAB
           </Link>
 
           <button
+            type="button"
+            aria-label={isOpen ? t("nav.closeMenu") : t("nav.openMenu")}
             onClick={() => setIsOpen(!isOpen)}
-            className="text-[#1a1a1a] dark:text-white text-2xl z-50"
+            className="text-ink dark:text-white text-2xl z-50"
           >
             {isOpen ? <HiX /> : <HiMenu />}
           </button>
@@ -125,7 +155,7 @@ const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
                 <Link
                   key={link.name}
                   to={link.path}
-                  className="text-3xl text-[#1a1a1a] dark:text-[#eeeeee] transition-colors duration-300"
+                  className="text-3xl text-ink dark:text-soft transition-colors duration-300"
                   onClick={handleLinkClick}
                 >
                   {link.name}
@@ -137,14 +167,18 @@ const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
                     handleLinkClick();
                     openDrawer();
                   }}
-                  className="text-3xl text-[#1a1a1a] dark:text-[#eeeeee]/80 hover:text-black dark:hover:text-white transition-colors duration-300"
+                  className="text-3xl text-ink dark:text-soft/80 hover:text-black dark:hover:text-white transition-colors duration-300"
                 >
                   {link.name}
                 </button>
-              )
+              ),
             )}
 
+            {languageSwitcher}
+
             <button
+              type="button"
+              aria-label={t("nav.toggleTheme")}
               onClick={() => setIsDark((prev) => !prev)}
               className="relative"
             >
@@ -153,7 +187,7 @@ const Navbar = ({ openDrawer }: { openDrawer: () => void }) => {
                   <BsSun />
                 </span>
               ) : (
-                <span className="text-blue-500">
+                <span className="text-primary">
                   <BsMoon />
                 </span>
               )}

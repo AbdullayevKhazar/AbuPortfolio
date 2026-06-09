@@ -28,7 +28,9 @@ const Experiences = lazy(() => import("./pages/admin/Experiences"));
 const EditExperience = lazy(() => import("./pages/admin/EditExperience"));
 const AddEducation = lazy(() => import("./pages/admin/AddEducation"));
 const Education = lazy(() => import("./pages/admin/Education"));
+const EditEducation = lazy(() => import("./pages/admin/EditEducation"));
 const AdminLogin = lazy(() => import("./pages/admin/AdminLogin"));
+const AdminSignup = lazy(() => import("./pages/admin/AdminSignup"));
 
 function App() {
   return (
@@ -52,6 +54,7 @@ function App() {
           </Route>
 
           <Route path="admin/login" element={<AdminLogin />} />
+          <Route path="admin/signup" element={<AdminSignup />} />
 
           <Route
             path="admin/*"
@@ -70,6 +73,7 @@ function App() {
             <Route path="experience" element={<Experiences />} />
             <Route path="educations" element={<Education />} />
             <Route path="add-educations" element={<AddEducation />} />
+            <Route path="edit-education/:id" element={<EditEducation />} />
             <Route path="edit-work/:id" element={<EditWork />} />
             <Route path="edit-experience/:id" element={<EditExperience />} />
           </Route>

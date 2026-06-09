@@ -1,22 +1,23 @@
 import { useState } from "react";
 import Container from "../../components/Container";
 import TabsBox from "../../components/TabsBox";
+import { useTranslation } from "react-i18next";
 
 const About = () => {
+  const { t } = useTranslation();
   const [tab, setTab] = useState("experience");
 
   return (
     <>
-      <title>Experience and Education Khazar's</title>
+      <title>{t("about.pageTitle")}</title>
       <meta
         name="description"
-        content="Experience and Education details of Khazar Abdullayev, showcasing work history and academic background."
+        content={t("about.metaDescription")}
       />
       <div
         className="
       h-auto w-full 
-      bg-white text-[#1a1a1a] 
-      dark:bg-[#0F0E0E] dark:text-[#eeeeee] 
+      bg-background text-foreground
       relative pt-24 md:pt-60 pb-20
       "
       >
@@ -25,7 +26,7 @@ const About = () => {
           {Array.from({ length: 20 }).map((_, index) => (
             <div
               key={index}
-              className="border-l border-[#1a1a1a]/3 dark:border-[#eeeeee]/2 h-full"
+              className="border-l border-ink/3 dark:border-soft/2 h-full"
             />
           ))}
         </div>
@@ -35,8 +36,8 @@ const About = () => {
           <div
             className="
           flex items-center w-full rounded-xl overflow-hidden 
-          border border-[#1a1a1a]/10 dark:border-[#1a1a1a]
-          bg-white dark:bg-[#eeeeee]/5 
+          border border-ink/10 dark:border-ink
+          bg-card
           backdrop-blur-md p-1 mb-6 relative z-10
           "
           >
@@ -46,12 +47,12 @@ const About = () => {
               flex-1 py-2 rounded-lg transition-all duration-300
               ${
                 tab === "experience"
-                  ? "bg-[#eeeeee] dark:bg-black/30 text-[#1a1a1a] dark:text-[#eeeeee]"
-                  : "text-[#1a1a1a]/50 dark:text-[#eeeeee]/40 hover:bg-[#1a1a1a]/10 dark:hover:bg-[#eeeeee]/10"
+                  ? "bg-soft dark:bg-black/30 text-ink dark:text-soft"
+                  : "text-ink/50 dark:text-soft/40 hover:bg-ink/10 dark:hover:bg-soft/10"
               }
             `}
             >
-              Work
+              {t("about.work")}
             </button>
 
             <button
@@ -60,12 +61,12 @@ const About = () => {
               flex-1 py-2 rounded-lg transition-all duration-300
               ${
                 tab === "education"
-                  ? "bg-[#eeeeee] dark:bg-black/30 text-[#1a1a1a] dark:text-[#eeeeee]"
-                  : "text-[#1a1a1a]/50 dark:text-[#eeeeee]/40 hover:bg-[#1a1a1a]/10 dark:hover:bg-[#eeeeee]/10"
+                  ? "bg-soft dark:bg-black/30 text-ink dark:text-soft"
+                  : "text-ink/50 dark:text-soft/40 hover:bg-ink/10 dark:hover:bg-soft/10"
               }
               `}
             >
-              Education
+              {t("about.education")}
             </button>
           </div>
 

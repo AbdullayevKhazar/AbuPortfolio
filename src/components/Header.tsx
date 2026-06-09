@@ -1,57 +1,57 @@
 import { Earth, MoveRight } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 const Header = () => {
+  const { t } = useTranslation();
+
   return (
-    <section className="w-full min-h-dvh relative flex items-center justify-center flex-col overflow-hidden px-4 sm:px-6">
-      <div className="absolute top-0 left-0 w-full h-full z-0 grid grid-cols-20">
+    <section className="relative flex min-h-dvh w-full flex-col items-center justify-center overflow-hidden px-4 sm:px-6">
+      <div className="absolute left-0 top-0 z-0 grid h-full w-full grid-cols-20">
         {Array.from({ length: 20 }).map((_, index) => (
-          <div key={index} className="border-l border-gray-50/1"></div>
+          <div key={index} className="border-l border-border/40"></div>
         ))}
       </div>
 
-      {/* Text Content */}
-      <div className="flex flex-col items-center justify-center max-w-[600px] text-wrap leading-none text-center">
-        <p className="text-[#1a1a1a] dark:text-[#eeeeee]/80  text-sm sm:text-md font-light z-10 leading-loose">
-          Based in Azerbaijan
+      <div className="flex max-w-3xl flex-col items-center justify-center text-center">
+        <p className="z-10 text-sm font-light leading-loose text-ink dark:text-soft/80 sm:text-base">
+          {t("header.location")}
         </p>
 
-        <h1 className="z-10 text-[#1a1a1a] dark:text-white text-4xl md:text-5xl font-bold mt-2">
-          Quality
-          <span className="text-[#59848e] dark:text-[#7fbdcb] block sm:inline px-1 sm:px-2 text-3xl sm:text-[40px]">
-            Design & Web Development
+        <h1 className="z-10 mt-2 text-4xl font-bold leading-tight text-ink dark:text-white sm:text-5xl md:text-6xl">
+          {t("header.intro")}
+          <span className="block text-brand dark:text-brand-light">
+            {t("header.role")}
           </span>
-          Synergy.
         </h1>
 
-        <p className=" text-[#1a1a1a] dark:text-[#eeeeee]/80 text-xs sm:text-sm font-light z-10 leading-relaxed mt-3">
-          Hi, I'm Khazar — a Front-End Developer passionate about crafting
-          modern digital experiences.
+        <p className="z-10 mt-4 max-w-xl text-sm font-light leading-relaxed text-ink/70 dark:text-soft/80 sm:text-base">
+          {t("header.description")}
         </p>
       </div>
 
-      {/* Buttons */}
-      <div className="z-10 mt-4 flex flex-col sm:flex-row gap-3 sm:gap-6">
+      <div className="z-10 mt-6 flex flex-col gap-3 sm:flex-row sm:gap-6">
         <Link
           to="../projects"
-          className="bg-[#eeeeee] shadow dark:bg-[#1A1A1A] text-xs sm:text-sm border border-gray-50/10 py-2 px-4 text-[#1a1a1a] dark:text-[#eeeeee]/90 flex items-center justify-center gap-1 rounded-md hover:text-[#1a1a1a]/50 dark:hover:text-white transition-colors duration-300"
+          className="flex items-center justify-center gap-1 rounded-md border border-primary/20 bg-primary px-4 py-2 text-xs text-primary-foreground shadow transition-colors duration-300 hover:bg-primary/90 sm:text-sm"
         >
-          See My Works
+          {t("header.works")}
           <MoveRight size={14} />
         </Link>
 
         <a
-          href="https://drive.google.com/file/d/1ognAaa-6CJiK_3TzirZ8NNNS5d0q3Z-j/view?usp=sharing"
+          href="https://drive.google.com/file/d/1fdoRVx2i96DyodVlrP2Ju_YPnDqV7WDZ/view?usp=sharing"
           target="_blank"
-          className="text-xs sm:text-sm text-[#59848e] dark:text-[#7fbdcb] flex items-center justify-center gap-1 rounded-md dark:hover:text-white transition-colors duration-300 cursor-pointer"
+          rel="noreferrer"
+          className="flex cursor-pointer items-center justify-center gap-1 rounded-md text-xs text-brand transition-colors duration-300 dark:text-brand-light dark:hover:text-white sm:text-sm"
         >
-          Look My CV
+          {t("header.cv")}
           <Earth size={14} />
         </a>
       </div>
 
-      <span className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-[#1a1a1a] dark:text-white/50 text-xs sm:text-sm z-10">
-        Scroll Down
+      <span className="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 text-xs text-ink dark:text-white/50 sm:text-sm">
+        {t("header.scroll")}
       </span>
     </section>
   );
